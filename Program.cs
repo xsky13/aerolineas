@@ -1,7 +1,12 @@
+using Aerolineas.Models;
+using DotNetEnv;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+Env.Load();
 
+// Add services to the container.
+builder.Services.AddDbContext<AeroContext>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
