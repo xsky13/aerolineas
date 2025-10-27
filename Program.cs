@@ -4,7 +4,6 @@ using Aerolineas.Models;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Tokens.Experimental;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +29,8 @@ builder.Services
         };
     });
 
+
+// builder.Services.AddScoped<
 
 builder.Services.AddControllers();
 
