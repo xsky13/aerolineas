@@ -45,4 +45,35 @@ public class UsuarioService(AeroContext dbContext) : IUserService
         await dbContext.SaveChangesAsync();
         return Result<Usuario>.Ok(nuevoUsuario);
     }
+
+    public async Task<Result<Usuario>> Update(UpdateDTO updateDTO, int userId)
+    {
+        var usuario = await Get(userId);
+        if (usuario == null) return Result<Usuario>.Fail("El usuario no existe");
+
+        if (updateDTO.Nombre != null) usuario.Nombre = updateDTO.Nombre;
+        if (updateDTO.Apellido != null) usuario.Apellido = updateDTO.Apellido;
+        if (updateDTO.Rol != null) usuario.Rol = updateDTO.Rol;
+        if (updateDTO.Email != null)
+        {
+            bool existeConEmail = await dbContext.Usuarios.AnyAsync(u => u.Email == updateDTO.Email && u.Id != userId);
+            if (existeConEmail) return Result<Usuario>.Fail("Ya hay un usuario con el email que ingreso");
+
+            usuario.Email = updateDTO.Email;
+        }
+
+        await dbContext.SaveChangesAsync();
+        return Result<Usuario>.Ok(usuario);
+    }
+
+    public async Task<Result<bool>> Delete(int id)
+    {
+        Usuario? usuario = await Get(id);
+        if (usuario == null) return Result<bool>.Fail("El usuario no existe");
+
+        dbContext.Usuarios.Remove(usuario);
+        await dbContext.SaveChangesAsync();
+
+        return Result<bool>.Ok(true);
+    }
 }
