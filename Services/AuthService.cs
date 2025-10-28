@@ -4,6 +4,7 @@ using System.Text;
 using Aerolineas.Config;
 using Aerolineas.DTO;
 using Aerolineas.Interfaces;
+using Aerolineas.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +15,7 @@ public class AuthService(IOptions<AuthConfig> configuration, IUserService userSe
 {
     private readonly AuthConfig _config = configuration.Value;
 
-    public string CreateToken(int userId, string userRole)
+    private string CreateToken(int userId, string userRole)
     {
         List<Claim> claims = [
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
@@ -52,8 +53,13 @@ public class AuthService(IOptions<AuthConfig> configuration, IUserService userSe
         return Result<string>.Fail("Contrasena incorrecta");
     }
 
-    public Task<Result<string>> Register(RegisterDTO registerDTO)
+    public async Task<Result<string>> Register(RegisterDTO registerDTO)
     {
-        throw new NotImplementedException();
+        var userResult = await userService.Create(registerDTO);
+        if (!userResult.Success)
+            return Result<string>.Fail(userResult.Error);
+
+        string token = CreateToken(userResult.Value.Id, userResult.Value.Rol);
+        return Result<string>.Ok(token);
     }
 }

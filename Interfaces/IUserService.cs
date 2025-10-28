@@ -9,5 +9,5 @@ public interface IUserService
     Task<Usuario?> Get(int id);
     Task<Usuario?> GetByEmail(string email);
     Task<List<Usuario>> GetAll();
-    Task<Result<string>> Create(RegisterDTO registerDTO);
+    Task<Result<Usuario>> Create(RegisterDTO registerDTO);
 }

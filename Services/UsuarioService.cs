@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class UsuarioService(AeroContext dbContext, IAuthService authService) : IUserService
+public class UsuarioService(AeroContext dbContext) : IUserService
 {
     public async Task<Usuario?> Get(int id)
     {
@@ -26,11 +26,11 @@ public class UsuarioService(AeroContext dbContext, IAuthService authService) : I
         return usuarios;
     }
 
-    public async Task<Result<string>> Create(RegisterDTO registerDTO)
+    public async Task<Result<Usuario>> Create(RegisterDTO registerDTO)
     {
         var userWithEmail = await GetByEmail(registerDTO.Email);
         if (userWithEmail != null)
-            return Result<string>.Fail("Ya hay un usuario con este email");
+            return Result<Usuario>.Fail("Ya hay un usuario con este email");
 
         Usuario nuevoUsuario = new()
         {
@@ -38,12 +38,11 @@ public class UsuarioService(AeroContext dbContext, IAuthService authService) : I
             Apellido = registerDTO.Apellido,
             DNI = registerDTO.DNI,
             Email = registerDTO.Email,
-            PasswordHash = registerDTO.Password,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password),
             Rol = "Pasajero"
         };
 
         await dbContext.SaveChangesAsync();
-        string token = authService.CreateToken(nuevoUsuario.Id, nuevoUsuario.Rol);
-        return Result<string>.Ok(token);
+        return Result<Usuario>.Ok(nuevoUsuario);
     }
 }
