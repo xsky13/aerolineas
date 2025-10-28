@@ -14,7 +14,7 @@ public class AuthService(IOptions<AuthConfig> configuration, IUserService userSe
 {
     private readonly AuthConfig _config = configuration.Value;
 
-    private string CreateToken(int userId, string userRole)
+    public string CreateToken(int userId, string userRole)
     {
         List<Claim> claims = [
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),

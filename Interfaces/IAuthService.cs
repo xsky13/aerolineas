@@ -5,6 +5,7 @@ namespace Aerolineas.Interfaces;
 
 public interface IAuthService
 {
+    string CreateToken(int userId, string userRole);
     Task<Result<string>> Login(LoginDTO emailDTO);
     Task<Result<string>> Register(RegisterDTO registerDTO);
 }
