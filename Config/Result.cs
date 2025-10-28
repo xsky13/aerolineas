@@ -9,13 +9,13 @@ public class Result<T>
 
     private Result() { }
 
-    public static Result<T> Fail(string message)
+    public static Result<T> Fail(string message, int statusCode = 400)
     {
-        return new() { Error = message, Success = false, StatusCode = 200 };
+        return new() { Error = message, Success = false, StatusCode = statusCode };
     }
 
-    public static Result<T> Ok(T data, int statusCode = 400)
+    public static Result<T> Ok(T data)
     {
-        return new() { Success = true, Value = data, StatusCode = statusCode };
+        return new() { Success = true, Value = data, StatusCode = 200 };
     }
 }
