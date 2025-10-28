@@ -28,9 +28,8 @@ public class UsuarioService(AeroContext dbContext) : IUserService
 
     public async Task<Result<Usuario>> Create(RegisterDTO registerDTO)
     {
-        var userWithEmail = await GetByEmail(registerDTO.Email);
-        if (userWithEmail != null)
-            return Result<Usuario>.Fail("Ya hay un usuario con este email");
+        bool exists = await dbContext.Usuarios.AnyAsync(u => u.Email == registerDTO.Email);
+        if (exists) return Result<Usuario>.Fail("Ya hay un usuario con este email");
 
         Usuario nuevoUsuario = new()
         {
@@ -42,6 +41,7 @@ public class UsuarioService(AeroContext dbContext) : IUserService
             Rol = "Pasajero"
         };
 
+        dbContext.Usuarios.Add(nuevoUsuario);
         await dbContext.SaveChangesAsync();
         return Result<Usuario>.Ok(nuevoUsuario);
     }
