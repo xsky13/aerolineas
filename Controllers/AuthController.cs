@@ -12,6 +12,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<ActionResult<string>> Login([FromBody] LoginDTO loginDTO)
     {
         var result = await authService.Login(loginDTO);
+        if (result == null) return BadRequest(new { error = "Contrasena o email invalido" });
         return Ok(result);
     }
 

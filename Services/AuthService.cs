@@ -4,12 +4,13 @@ using System.Text;
 using Aerolineas.Config;
 using Aerolineas.DTO;
 using Aerolineas.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Aerolineas.Services;
 
-public class AuthService(IOptions<AuthConfig> configuration) : IAuthService
+public class AuthService(IOptions<AuthConfig> configuration, IUserService userService) : IAuthService
 {
     private readonly AuthConfig _config = configuration.Value;
 
@@ -36,19 +37,21 @@ public class AuthService(IOptions<AuthConfig> configuration) : IAuthService
     }
 
 
-    public Task<string> Login(LoginDTO loginDTO)
+    public async Task<string?> Login(LoginDTO loginDTO)
     {
-        // verificar que existe usuarios
+        var usuario = await userService.GetByEmail(loginDTO.Email);
+        if (usuario == null)
+            return null;
 
-        // verificar que contrasena sea correcta
+        if (BCrypt.Net.BCrypt.Verify(loginDTO.Password, usuario.PasswordHash))
+        {
+            return CreateToken(usuario.Id, usuario.Rol);
+        }
 
-        // crear token y retornar
-
-
-        throw new NotImplementedException();
+        return null;
     }
 
-    public Task<string> Register(RegisterDTO registerDTO)
+    public Task<string?> Register(RegisterDTO registerDTO)
     {
         throw new NotImplementedException();
     }
