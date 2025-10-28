@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Aerolineas.Config;
 using Aerolineas.DTO;
 using Aerolineas.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -12,13 +13,12 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<ActionResult<string>> Login([FromBody] LoginDTO loginDTO)
     {
         var result = await authService.Login(loginDTO);
-        if (result == null) return BadRequest(new { error = "Contrasena o email invalido" });
-        return Ok(result);
+        return result.ToActionResult();
     }
 
     public async Task<ActionResult<string>> Register([FromBody] RegisterDTO registerDTO)
     {
         var result = await authService.Register(registerDTO);
-        return Ok(result);
+        return result.ToActionResult();
     }
 }

@@ -37,21 +37,22 @@ public class AuthService(IOptions<AuthConfig> configuration, IUserService userSe
     }
 
 
-    public async Task<string?> Login(LoginDTO loginDTO)
+    public async Task<Result<string>> Login(LoginDTO loginDTO)
     {
         var usuario = await userService.GetByEmail(loginDTO.Email);
         if (usuario == null)
-            return null;
+            return Result<string>.Fail("El usuario no existe");
 
         if (BCrypt.Net.BCrypt.Verify(loginDTO.Password, usuario.PasswordHash))
         {
-            return CreateToken(usuario.Id, usuario.Rol);
+            string token = CreateToken(usuario.Id, usuario.Rol);
+            return Result<string>.Ok(token);
         }
 
-        return null;
+        return Result<string>.Fail("Contrasena incorrecta");
     }
 
-    public Task<string?> Register(RegisterDTO registerDTO)
+    public Task<Result<string>> Register(RegisterDTO registerDTO)
     {
         throw new NotImplementedException();
     }
