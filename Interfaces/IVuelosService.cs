@@ -9,9 +9,10 @@ public interface IVuelosService
     Task<List<Vuelo>> ConsultarVuelos();
     Task<Vuelo?> ConsultarVuelo(int id);
     Task<Vuelo> RegistrarVuelo(VueloDTO vuelo);
-    Task<Result<Vuelo>> ModificarVuelo(int id, Vuelo vuelo);
-    Task<Result<bool>> CancelarVuelo(int id);
-    Task<Vuelo> ConfirmarVuelo(int id);
+    Task<Result<Vuelo>> ModificarVuelo(int id, VueloDTO vuelo);
+    Task<Result<bool>> EliminarVuelo(int id);
+    Task<Result<Vuelo>> CancelarVuelo(int id);
+    Task<Result<Vuelo>> ConfirmarVuelo(int id);
     Task<Result<int>> BuscarSlot();
-    Task<Vuelo> AsignarSlot(int id);
+    Task<Result<Vuelo>> AsignarSlot(int id, int slotId);
 }

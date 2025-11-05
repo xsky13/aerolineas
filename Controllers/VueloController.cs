@@ -40,36 +40,48 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
-    public async Task<ActionResult<Vuelo>> Update([FromBody] Vuelo vuelo, int id)
+    public async Task<ActionResult<Vuelo>> Update([FromBody] VueloDTO vuelo, int id)
     {
         var response = await vuelosService.ModificarVuelo(id, vuelo);
         return response.ToActionResult();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}/cancelar")]
     [Authorize(Roles = "admin")]
-    public async Task<ActionResult<bool>> Cancel([FromBody] Vuelo vuelo, int id)
+    public async Task<ActionResult<Vuelo>> Cancel([FromBody] Vuelo vuelo, int id)
     {
         var response = await vuelosService.CancelarVuelo(id);
         return response.ToActionResult();
     }
 
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
+    public async Task<ActionResult<bool>> Eliminar([FromBody] Vuelo vuelo, int id)
+    {
+        var response = await vuelosService.EliminarVuelo(id);
+        return response.ToActionResult();
+    }
+
     [HttpPost("/{id}/asignar_slot")]
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<Vuelo>> AsignarSlot(int id)
     {
-        Result<int> conseguirSlot = await vuelosService.BuscarSlot();
-        if (conseguirSlot.Success)
-            return Ok(await vuelosService.AsignarSlot(id));
+        Result<int> slotResponse = await vuelosService.BuscarSlot();
+        if (slotResponse.Success)
+        {
+            var slot = await vuelosService.AsignarSlot(id, slotResponse.Value);
+            return slot.ToActionResult();
+        }
+
 
         return BadRequest(new { error = "No hay slot" });
     }
 
     [HttpPost("/{id}/confirmar")]
-    [Authorize]
+    [Authorize(Roles = "admin")]
     public async Task<ActionResult<Vuelo>> ConfirmarVuelo(int id)
     {
-        Vuelo vueloConfirmado = await vuelosService.ConfirmarVuelo(id);
-        return Ok(vueloConfirmado);
+        var response = await vuelosService.ConfirmarVuelo(id);
+        return response.ToActionResult();
     }
 }
