@@ -13,4 +13,5 @@ public interface IVuelosService
     Task<Result<bool>> CancelarVuelo(int id);
     Task<bool> ConfirmarVuelo(int id);
     Task<Result<int>> BuscarSlot();
+    Task<Vuelo> AsignarSlot();
 }
