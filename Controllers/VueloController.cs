@@ -40,15 +40,15 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "admin")]
     [HttpPut("{id}")]
-    public async Task<ActionResult<Vuelo>> Update([FromBody] VueloDTO vuelo, int id)
+    public async Task<ActionResult<Vuelo>> Update([FromBody] UpdateVueloDTO vuelo, int id)
     {
         var response = await vuelosService.ModificarVuelo(id, vuelo);
         return response.ToActionResult();
     }
 
     [Authorize(Roles = "admin")]
-    [HttpDelete("{id}/cancelar")]
-    public async Task<ActionResult<Vuelo>> Cancel([FromBody] Vuelo vuelo, int id)
+    [HttpPost("{id}/cancelar")]
+    public async Task<ActionResult<Vuelo>> Cancel(int id)
     {
         var response = await vuelosService.CancelarVuelo(id);
         return response.ToActionResult();
@@ -56,7 +56,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "admin")]
     [HttpDelete("{id}")]
-    public async Task<ActionResult<bool>> Eliminar([FromBody] Vuelo vuelo, int id)
+    public async Task<ActionResult<bool>> Eliminar(int id)
     {
         var response = await vuelosService.EliminarVuelo(id);
         return response.ToActionResult();
@@ -82,6 +82,14 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
     public async Task<ActionResult<Vuelo>> ConfirmarVuelo(int id)
     {
         var response = await vuelosService.ConfirmarVuelo(id);
+        return response.ToActionResult();
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpPost("{id}/programar")]
+    public async Task<ActionResult<Vuelo>> ProgramarVuelo(int id)
+    {
+        var response = await vuelosService.ProgramarVuelo(id);
         return response.ToActionResult();
     }
 }

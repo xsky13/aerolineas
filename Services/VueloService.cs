@@ -55,6 +55,16 @@ public class VueloService(AeroContext db) : IVuelosService
         return Result<Vuelo>.Ok(vuelo);
     }
 
+    public async Task<Result<Vuelo>> ProgramarVuelo(int id)
+    {
+        Vuelo? vuelo = await ConsultarVuelo(id);
+        if (vuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
+
+        vuelo.Estado = "programado";
+        await db.SaveChangesAsync();
+        return Result<Vuelo>.Ok(vuelo);
+    }
+
     public async Task<Vuelo?> ConsultarVuelo(int id)
     {
         return await db.Vuelos.FirstOrDefaultAsync(v => v.Id == id);
@@ -65,15 +75,15 @@ public class VueloService(AeroContext db) : IVuelosService
         return db.Vuelos.ToListAsync();
     }
 
-    public async Task<Result<Vuelo>> ModificarVuelo(int id, VueloDTO vuelo)
+    public async Task<Result<Vuelo>> ModificarVuelo(int id, UpdateVueloDTO vuelo)
     {
         Vuelo? dbVuelo = await ConsultarVuelo(id);
         if (dbVuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
 
         if (vuelo.Origen != null) dbVuelo.Origen = vuelo.Origen;
         if (vuelo.Destino != null) dbVuelo.Destino = vuelo.Destino;
-        if (vuelo.HorarioSalida != default) dbVuelo.HorarioSalida = vuelo.HorarioSalida;
-        if (vuelo.HorarioLlegada != default) dbVuelo.HorarioLlegada = vuelo.HorarioLlegada;
+        if (vuelo.HorarioSalida != default) dbVuelo.HorarioSalida = (DateTime)vuelo.HorarioSalida;
+        if (vuelo.HorarioLlegada != default) dbVuelo.HorarioLlegada = (DateTime)vuelo.HorarioLlegada;
 
         await db.SaveChangesAsync();
         return Result<Vuelo>.Ok(dbVuelo);
