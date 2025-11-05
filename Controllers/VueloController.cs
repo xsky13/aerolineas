@@ -10,19 +10,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace Aerolineas.Controllers;
 
 [ApiController]
-[Route("/api/vuelos")]
+[Route("api/vuelos")]
 public class VueloController(IVuelosService vuelosService) : ControllerBase
 {
-    [HttpGet]
     [Authorize]
-    public async Task<ActionResult<Task<List<Vuelo>>>> Get()
+    [HttpGet]
+    public async Task<ActionResult<List<Vuelo>>> Get()
     {
         var vuelos = await vuelosService.ConsultarVuelos();
         return Ok(vuelos);
     }
 
-    [HttpGet("/{id}")]
     [Authorize]
+    [HttpGet("{id}")]
     public async Task<ActionResult<Vuelo>> GetById(int id)
     {
         Vuelo? vuelo = await vuelosService.ConsultarVuelo(id);
@@ -30,40 +30,40 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
         return Ok(vuelo);
     }
 
-    [HttpPost]
     [Authorize(Roles = "admin")]
+    [HttpPost]
     public async Task<ActionResult<Vuelo>> Create([FromBody] VueloDTO vueloDTO)
     {
         Vuelo vuelo = await vuelosService.RegistrarVuelo(vueloDTO);
         return Ok(vuelo);
     }
 
-    [HttpPut("{id}")]
     [Authorize(Roles = "admin")]
+    [HttpPut("{id}")]
     public async Task<ActionResult<Vuelo>> Update([FromBody] VueloDTO vuelo, int id)
     {
         var response = await vuelosService.ModificarVuelo(id, vuelo);
         return response.ToActionResult();
     }
 
-    [HttpDelete("{id}/cancelar")]
     [Authorize(Roles = "admin")]
+    [HttpDelete("{id}/cancelar")]
     public async Task<ActionResult<Vuelo>> Cancel([FromBody] Vuelo vuelo, int id)
     {
         var response = await vuelosService.CancelarVuelo(id);
         return response.ToActionResult();
     }
 
-    [HttpDelete("{id}")]
     [Authorize(Roles = "admin")]
+    [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> Eliminar([FromBody] Vuelo vuelo, int id)
     {
         var response = await vuelosService.EliminarVuelo(id);
         return response.ToActionResult();
     }
 
-    [HttpPost("/{id}/asignar_slot")]
     [Authorize(Roles = "admin")]
+    [HttpPost("{id}/asignar_slot")]
     public async Task<ActionResult<Vuelo>> AsignarSlot(int id)
     {
         Result<int> slotResponse = await vuelosService.BuscarSlot();
@@ -77,8 +77,8 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
         return BadRequest(new { error = "No hay slot" });
     }
 
-    [HttpPost("/{id}/confirmar")]
     [Authorize(Roles = "admin")]
+    [HttpPost("{id}/confirmar")]
     public async Task<ActionResult<Vuelo>> ConfirmarVuelo(int id)
     {
         var response = await vuelosService.ConfirmarVuelo(id);
