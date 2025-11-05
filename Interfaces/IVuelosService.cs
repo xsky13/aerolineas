@@ -11,9 +11,6 @@ public interface IVuelosService
     Task<Vuelo> RegistrarVuelo(VueloDTO vuelo);
     Task<Result<Vuelo>> ModificarVuelo(int id, Vuelo vuelo);
     Task<Result<bool>> CancelarVuelo(int id);
-    Task<bool> VerificarOrigen(int id);
-    Task<bool> VerificarDestino(int id);
     Task<bool> ConfirmarVuelo(int id);
-    Task<Vuelo> CambiarOrigen(int id);
-    Task<Vuelo> CambiarDestino(int id);
+    Task<Result<int>> BuscarSlot();
 }
