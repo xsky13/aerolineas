@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public class AeroContext : DbContext
 {
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Reserva> Reservas { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
