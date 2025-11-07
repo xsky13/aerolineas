@@ -95,9 +95,9 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "adming")]
     [HttpPost("{id}/aeronave")]
-    public async Task<ActionResult<Vuelo>> CambiarAeronave([FromBody] int aeronaveId, int id)
+    public async Task<ActionResult<Vuelo>> CambiarAeronave([FromBody] CambiarAeronaveDTO aeronaveDTO, int id)
     {
-        var response = await vuelosService.AsignarAeronave(id, aeronaveId);
+        var response = await vuelosService.AsignarAeronave(id, aeronaveDTO);
         return response.ToActionResult();
     }
 }

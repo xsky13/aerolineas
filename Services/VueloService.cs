@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class VueloService(AeroContext db, AeronaveService aeronaveService) : IVuelosService
+public class VueloService(AeroContext db, IAeronaveService aeronaveService) : IVuelosService
 {
     public async Task<Result<Vuelo>> AsignarSlot(int id, int slotId)
     {
@@ -109,16 +109,16 @@ public class VueloService(AeroContext db, AeronaveService aeronaveService) : IVu
         return dbVuelo;
     }
 
-    public async Task<Result<Vuelo>> AsignarAeronave(int id, int aeronaveId)
+    public async Task<Result<Vuelo>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO)
     {
         Vuelo? vuelo = await ConsultarVuelo(id);
-        var aeronaveResponse = await aeronaveService.GetAeronaveById(aeronaveId);
+        var aeronaveResponse = await aeronaveService.GetAeronaveById(aeronaveDTO.AeronaveId);
         if (!aeronaveResponse.Success) return Result<Vuelo>.Fail(aeronaveResponse.Error, 404);
         if (vuelo == null) return Result<Vuelo>.Fail("No existe el vuelo", 404);
 
 
         vuelo.Aeronave = aeronaveResponse.Value;
-        var responseUpdateAeronave = await aeronaveService.UpdateAeronave(aeronaveId, new UpdateAeronaveDTO() { Vuelo = vuelo });
+        var responseUpdateAeronave = await aeronaveService.UpdateAeronave(aeronaveDTO.AeronaveId, new UpdateAeronaveDTO() { Vuelo = vuelo });
 
         if (!responseUpdateAeronave.Success) return Result<Vuelo>.Fail(responseUpdateAeronave.Error);
 
