@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Aerolineas.Controllers;
 
 [ApiController]
+[Route("api/[controller]")]
 public class UsuarioController(IUserService userService) : ControllerBase
 {
     [Authorize]
-    [HttpGet("/usuarios")]
+    [HttpGet]
     public async Task<ActionResult<List<Usuario>>> Get()
     {
         var usuarios = await userService.GetAll();
@@ -20,7 +21,7 @@ public class UsuarioController(IUserService userService) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("/usuarios/{id}")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<Usuario>> GetById(int id)
     {
         var usuario = await userService.Get(id);
@@ -29,7 +30,7 @@ public class UsuarioController(IUserService userService) : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("/usuarios")]
+    [HttpPost]
     public async Task<ActionResult<Usuario>> Create([FromBody] RegisterDTO registerDTO)
     {
         var usuario = await userService.Create(registerDTO);
@@ -37,7 +38,7 @@ public class UsuarioController(IUserService userService) : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch("/usuarios/{id}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<Usuario>> Editar([FromBody] UpdateDTO updateDTO, int id)
     {
         var usuario = await userService.Update(updateDTO, id);

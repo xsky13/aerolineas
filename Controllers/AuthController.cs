@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace Aerolineas.Controllers;
 
 [ApiController]
+[Route("api/[controller]")]
 public class AuthController(IAuthService authService) : ControllerBase
 {
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<ActionResult<string>> Login([FromBody] LoginDTO loginDTO)
     {
         var result = await authService.Login(loginDTO);
         return result.ToActionResult();
     }
 
-    [HttpPost("/register")]
+    [HttpPost("register")]
     public async Task<ActionResult<string>> Register([FromBody] RegisterDTO registerDTO)
     {
         var result = await authService.Register(registerDTO);
