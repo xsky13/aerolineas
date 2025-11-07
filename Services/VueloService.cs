@@ -42,6 +42,8 @@ public class VueloService(AeroContext db) : IVuelosService
 
         vuelo.Estado = "cancelado";
         await db.SaveChangesAsync();
+
+        // llamar servicio cancelar reserva
         return Result<Vuelo>.Ok(vuelo);
     }
 
