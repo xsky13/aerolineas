@@ -9,7 +9,6 @@ namespace Aerolineas.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class AeronavesController : ControllerBase
 {
     private readonly IAeronaveService _aeronaveService;
@@ -33,6 +32,7 @@ public class AeronavesController : ControllerBase
         return result.ToActionResult();
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<Aeronave>> Create(CreateAeronaveDTO dto)
     {
@@ -40,6 +40,7 @@ public class AeronavesController : ControllerBase
         return result.ToActionResult();
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<ActionResult<Aeronave>> Update(int id, UpdateAeronaveDTO dto)
     {
@@ -47,6 +48,8 @@ public class AeronavesController : ControllerBase
         return result.ToActionResult();
     }
 
+
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> Delete(int id)
     {
