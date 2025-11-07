@@ -69,12 +69,12 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService) : IV
 
     public async Task<Vuelo?> ConsultarVuelo(int id)
     {
-        return await db.Vuelos.FirstOrDefaultAsync(v => v.Id == id);
+        return await db.Vuelos.Include(v => v.Aeronave).FirstOrDefaultAsync(v => v.Id == id);
     }
 
     public Task<List<Vuelo>> ConsultarVuelos()
     {
-        return db.Vuelos.ToListAsync();
+        return db.Vuelos.Include(v => v.Aeronave).ToListAsync();
     }
 
     public async Task<Result<Vuelo>> ModificarVuelo(int id, UpdateVueloDTO vuelo)
@@ -91,7 +91,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService) : IV
         return Result<Vuelo>.Ok(dbVuelo);
     }
 
-    public async Task<Vuelo> RegistrarVuelo(VueloDTO vuelo)
+    public async Task<Vuelo> RegistrarVuelo(CrearVueloDTO vuelo)
     {
         Vuelo dbVuelo = new()
         {

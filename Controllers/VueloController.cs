@@ -32,7 +32,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "admin")]
     [HttpPost]
-    public async Task<ActionResult<Vuelo>> Create([FromBody] VueloDTO vueloDTO)
+    public async Task<ActionResult<Vuelo>> Create([FromBody] CrearVueloDTO vueloDTO)
     {
         Vuelo vuelo = await vuelosService.RegistrarVuelo(vueloDTO);
         return Ok(vuelo);
@@ -93,7 +93,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
         return response.ToActionResult();
     }
 
-    [Authorize(Roles = "adming")]
+    [Authorize(Roles = "admin")]
     [HttpPost("{id}/aeronave")]
     public async Task<ActionResult<Vuelo>> CambiarAeronave([FromBody] CambiarAeronaveDTO aeronaveDTO, int id)
     {
