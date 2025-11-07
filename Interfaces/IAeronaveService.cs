@@ -6,6 +6,8 @@ namespace Aerolineas.Interfaces;
 
 public interface IAeronaveService
 {
+    Task<Result<List<AeronaveDTO>>> GetAllAeronavesFull();
+    Task<Result<AeronaveDTO>> GetAeronaveByIdFull(int id);
     Task<Result<List<Aeronave>>> GetAllAeronaves();
     Task<Result<Aeronave>> GetAeronaveById(int id);
     Task<Result<Aeronave>> CreateAeronave(CreateAeronaveDTO dto);

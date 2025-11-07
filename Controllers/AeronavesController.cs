@@ -19,16 +19,16 @@ public class AeronavesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Aeronave>>> GetAll()
+    public async Task<ActionResult<List<AeronaveDTO>>> GetAll()
     {
-        var result = await _aeronaveService.GetAllAeronaves();
+        var result = await _aeronaveService.GetAllAeronavesFull();
         return result.ToActionResult();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Aeronave>> GetById(int id)
+    public async Task<ActionResult<AeronaveDTO>> GetById(int id)
     {
-        var result = await _aeronaveService.GetAeronaveById(id);
+        var result = await _aeronaveService.GetAeronaveByIdFull(id);
         return result.ToActionResult();
     }
 
