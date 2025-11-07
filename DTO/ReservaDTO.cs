@@ -6,7 +6,7 @@ public class ReservaDTO
     public int UsuarioId { get; set; }
     public UsuarioSimpleDTO Usuario { get; set; }
     public int VueloId { get; set; }
-    public VueloDTO Vuelo { get; set; }
+    public VueloSimpleDTO Vuelo { get; set; }
     public DateTime FechaReserva { get; set; }
     public bool Confirmado { get; set; }
 }
