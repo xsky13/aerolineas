@@ -1,6 +1,7 @@
 using System.Text;
 using Aerolineas.Config;
 using Aerolineas.Interfaces;
+using Aerolineas.Mapper;
 using Aerolineas.Models;
 using Aerolineas.Services;
 using DotNetEnv;
@@ -38,10 +39,13 @@ builder.Services
         };
     });
 
+builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
+
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UsuarioService>();
 builder.Services.AddScoped<IAeronaveService, AeronaveService>();
+builder.Services.AddScoped<IVuelosService, VueloService>();
 
 builder.Services.AddControllers();
 

@@ -2,6 +2,8 @@ using Aerolineas.Config;
 using Aerolineas.DTO;
 using Aerolineas.Interfaces;
 using Aerolineas.Models;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
@@ -9,10 +11,12 @@ namespace Aerolineas.Services;
 public class AeronaveService : IAeronaveService
 {
     private readonly AeroContext _context;
+    private readonly IMapper mapper;
 
-    public AeronaveService(AeroContext context)
+    public AeronaveService(AeroContext context, IMapper _mapper)
     {
         _context = context;
+        mapper = _mapper;
     }
 
     public async Task<Result<List<Aeronave>>> GetAllAeronaves()
@@ -29,6 +33,22 @@ public class AeronaveService : IAeronaveService
         
         return Result<Aeronave>.Ok(aeronave);
     }
+
+public async Task<Result<List<AeronaveDTO>>> GetAllAeronavesFull()
+    {
+        var aeronaves = await _context.Aeronaves.ProjectTo<AeronaveDTO>(mapper.ConfigurationProvider).ToListAsync();
+        return Result<List<AeronaveDTO>>.Ok(aeronaves);
+    }
+
+    public async Task<Result<AeronaveDTO>> GetAeronaveByIdFull(int id)
+    {
+        var aeronave = await _context.Aeronaves.ProjectTo<AeronaveDTO>(mapper.ConfigurationProvider).FirstOrDefaultAsync(a => a.Id == id);
+        if (aeronave == null)
+            return Result<AeronaveDTO>.Fail("Aeronave no encontrada", 404);
+        
+        return Result<AeronaveDTO>.Ok(aeronave);
+    }
+
 
     public async Task<Result<Aeronave>> CreateAeronave(CreateAeronaveDTO dto)
     {
@@ -64,6 +84,8 @@ public class AeronaveService : IAeronaveService
             aeronave.Capacidad = dto.Capacidad.Value;
         if (dto.EstadoOperativo.HasValue)
             aeronave.EstadoOperativo = dto.EstadoOperativo.Value;
+        if (dto.Vuelo != null)
+            aeronave.Vuelos.Add(dto.Vuelo);
 
         await _context.SaveChangesAsync();
         return Result<Aeronave>.Ok(aeronave);

@@ -23,4 +23,5 @@ public class Aeronave
 
     [Required]
     public bool EstadoOperativo { get; set; }
+    public ICollection<Vuelo> Vuelos { get; set; } = new List<Vuelo>();
 }

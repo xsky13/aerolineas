@@ -6,6 +6,7 @@ public class AeroContext : DbContext
 {
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Aeronave> Aeronaves { get; set; }
+    public DbSet<Vuelo> Vuelos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

@@ -9,7 +9,6 @@ namespace Aerolineas.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class AeronavesController : ControllerBase
 {
     private readonly IAeronaveService _aeronaveService;
@@ -20,19 +19,20 @@ public class AeronavesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Aeronave>>> GetAll()
+    public async Task<ActionResult<List<AeronaveDTO>>> GetAll()
     {
-        var result = await _aeronaveService.GetAllAeronaves();
+        var result = await _aeronaveService.GetAllAeronavesFull();
         return result.ToActionResult();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Aeronave>> GetById(int id)
+    public async Task<ActionResult<AeronaveDTO>> GetById(int id)
     {
-        var result = await _aeronaveService.GetAeronaveById(id);
+        var result = await _aeronaveService.GetAeronaveByIdFull(id);
         return result.ToActionResult();
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<Aeronave>> Create(CreateAeronaveDTO dto)
     {
@@ -40,6 +40,7 @@ public class AeronavesController : ControllerBase
         return result.ToActionResult();
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<ActionResult<Aeronave>> Update(int id, UpdateAeronaveDTO dto)
     {
@@ -47,6 +48,8 @@ public class AeronavesController : ControllerBase
         return result.ToActionResult();
     }
 
+
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> Delete(int id)
     {
