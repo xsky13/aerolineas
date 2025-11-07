@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class VueloService(AeroContext db) : IVuelosService
+public class VueloService(AeroContext db, AeronaveService aeronaveService) : IVuelosService
 {
     public async Task<Result<Vuelo>> AsignarSlot(int id, int slotId)
     {
@@ -84,8 +84,8 @@ public class VueloService(AeroContext db) : IVuelosService
 
         if (vuelo.Origen != null) dbVuelo.Origen = vuelo.Origen;
         if (vuelo.Destino != null) dbVuelo.Destino = vuelo.Destino;
-        if (vuelo.HorarioSalida != default) dbVuelo.HorarioSalida = (DateTime)vuelo.HorarioSalida;
-        if (vuelo.HorarioLlegada != default) dbVuelo.HorarioLlegada = (DateTime)vuelo.HorarioLlegada;
+        if (vuelo.HorarioSalida != null && vuelo.HorarioSalida != default) dbVuelo.HorarioSalida = (DateTime)vuelo.HorarioSalida;
+        if (vuelo.HorarioLlegada != null && vuelo.HorarioLlegada != default) dbVuelo.HorarioLlegada = (DateTime)vuelo.HorarioLlegada;
 
         await db.SaveChangesAsync();
         return Result<Vuelo>.Ok(dbVuelo);
@@ -107,5 +107,22 @@ public class VueloService(AeroContext db) : IVuelosService
         await db.SaveChangesAsync();
 
         return dbVuelo;
+    }
+
+    public async Task<Result<Vuelo>> AsignarAeronave(int id, int aeronaveId)
+    {
+        Vuelo? vuelo = await ConsultarVuelo(id);
+        var aeronaveResponse = await aeronaveService.GetAeronaveById(aeronaveId);
+        if (!aeronaveResponse.Success) return Result<Vuelo>.Fail(aeronaveResponse.Error, 404);
+        if (vuelo == null) return Result<Vuelo>.Fail("No existe el vuelo", 404);
+
+
+        vuelo.Aeronave = aeronaveResponse.Value;
+        var responseUpdateAeronave = await aeronaveService.UpdateAeronave(aeronaveId, new UpdateAeronaveDTO() { Vuelo = vuelo });
+
+        if (!responseUpdateAeronave.Success) return Result<Vuelo>.Fail(responseUpdateAeronave.Error);
+
+        await db.SaveChangesAsync();
+        return Result<Vuelo>.Ok(vuelo);
     }
 }

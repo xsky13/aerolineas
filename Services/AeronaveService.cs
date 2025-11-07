@@ -64,6 +64,8 @@ public class AeronaveService : IAeronaveService
             aeronave.Capacidad = dto.Capacidad.Value;
         if (dto.EstadoOperativo.HasValue)
             aeronave.EstadoOperativo = dto.EstadoOperativo.Value;
+        if (dto.Vuelo != null)
+            aeronave.Vuelos.Add(dto.Vuelo);
 
         await _context.SaveChangesAsync();
         return Result<Aeronave>.Ok(aeronave);

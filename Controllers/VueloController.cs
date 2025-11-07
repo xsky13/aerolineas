@@ -92,4 +92,12 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
         var response = await vuelosService.ProgramarVuelo(id);
         return response.ToActionResult();
     }
+
+    [Authorize(Roles = "adming")]
+    [HttpPost("{id}/aeronave")]
+    public async Task<ActionResult<Vuelo>> CambiarAeronave([FromBody] int aeronaveId, int id)
+    {
+        var response = await vuelosService.AsignarAeronave(id, aeronaveId);
+        return response.ToActionResult();
+    }
 }

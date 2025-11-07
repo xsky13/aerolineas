@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aerolineas.Migrations
 {
     [DbContext(typeof(AeroContext))]
-    [Migration("20251105201948_VuelosMigration")]
-    partial class VuelosMigration
+    [Migration("20251107170759_RestartedDB")]
+    partial class RestartedDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,38 @@ namespace Aerolineas.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Aerolineas.Models.Aeronave", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnioFabricacion")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Capacidad")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EstadoOperativo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Matricula")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Modelo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Aeronaves");
+                });
 
             modelBuilder.Entity("Aerolineas.Models.Usuario", b =>
                 {
@@ -70,6 +102,9 @@ namespace Aerolineas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AeronaveId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Destino")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -93,7 +128,23 @@ namespace Aerolineas.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AeronaveId");
+
                     b.ToTable("Vuelos");
+                });
+
+            modelBuilder.Entity("Aerolineas.Models.Vuelo", b =>
+                {
+                    b.HasOne("Aerolineas.Models.Aeronave", "Aeronave")
+                        .WithMany("Vuelos")
+                        .HasForeignKey("AeronaveId");
+
+                    b.Navigation("Aeronave");
+                });
+
+            modelBuilder.Entity("Aerolineas.Models.Aeronave", b =>
+                {
+                    b.Navigation("Vuelos");
                 });
 #pragma warning restore 612, 618
         }

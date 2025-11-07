@@ -99,6 +99,9 @@ namespace Aerolineas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AeronaveId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Destino")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -122,7 +125,23 @@ namespace Aerolineas.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AeronaveId");
+
                     b.ToTable("Vuelos");
+                });
+
+            modelBuilder.Entity("Aerolineas.Models.Vuelo", b =>
+                {
+                    b.HasOne("Aerolineas.Models.Aeronave", "Aeronave")
+                        .WithMany("Vuelos")
+                        .HasForeignKey("AeronaveId");
+
+                    b.Navigation("Aeronave");
+                });
+
+            modelBuilder.Entity("Aerolineas.Models.Aeronave", b =>
+                {
+                    b.Navigation("Vuelos");
                 });
 #pragma warning restore 612, 618
         }
