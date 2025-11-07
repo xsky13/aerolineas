@@ -11,14 +11,59 @@ namespace Aerolineas.Services;
 
 public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMapper mapper) : IVuelosService
 {
-    public async Task<Result<Vuelo>> AsignarSlot(int id, int slotId)
+    public async Task<Result<VueloDTO>> AsignarSlot(int id, SlotResponse slotResponse)
     {
-        Vuelo? vuelo = await ConsultarVuelo(id);
-        if (vuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
+        var vuelo = await ConsultarVuelo(id);
+        if (vuelo == null) return Result<VueloDTO>.Fail("El vuelo no existe", 404);
 
-        vuelo.SlotId = slotId;
-        await db.SaveChangesAsync();
-        return Result<Vuelo>.Ok(vuelo);
+        using var transaction = await db.Database.BeginTransactionAsync();
+        try
+        {
+            await db.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT Slots ON");
+
+            Slot slot = new Slot()
+            {
+                Id = slotResponse.Id,
+                FlightCode = slotResponse.FlightCode,
+                Runway = slotResponse.Runway,
+                Status = slotResponse.Status,
+                GateId = slotResponse.GateId,
+                Date = slotResponse.Date,
+            };
+            db.Slots.Add(slot);
+
+            // Guardar el slot primero
+            await db.SaveChangesAsync();
+            await db.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT Slots OFF");
+
+            // Ahora asignar el slot al vuelo
+            vuelo.SlotId = slot.Id;
+            await db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return Result<VueloDTO>.Ok(mapper.Map<VueloDTO>(vuelo));
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    public async Task<Result<SlotResponse>> GenerarSlot(int id)
+    {
+        SlotResponse slotResponse = new SlotResponse()
+        {
+            Id = 12345,
+            Date = DateTime.Parse("2025-11-20T14:30:00Z"),
+            Runway = "Pista 1",
+            GateId = 42,
+            Status = "Reservado",
+            FlightCode = "AR1234",
+            ReservationExpiresAt = DateTime.Parse("2025-11-20T14:45:00Z")
+        };
+        return Result<SlotResponse>.Ok(slotResponse);
     }
 
     public async Task<Result<int>> BuscarSlot()
@@ -26,28 +71,42 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
         return Result<int>.Ok(1);
     }
 
+
     public async Task<Result<bool>> EliminarVuelo(int id)
     {
-        Vuelo? vuelo = await ConsultarVuelo(id);
-        if (vuelo == null) return Result<bool>.Fail("El vuelo no existe");
+        var vuelo = await db.Vuelos
+            .Include(v => v.Reservas)
+            .FirstOrDefaultAsync(v => v.Id == id);
+
+        if (vuelo == null)
+            return Result<bool>.Fail("El vuelo no existe");
+
+        foreach (var reserva in vuelo.Reservas)
+            reserva.Confirmado = false;
 
         db.Vuelos.Remove(vuelo);
         await db.SaveChangesAsync();
 
         return Result<bool>.Ok(true);
     }
-
-    public async Task<Result<Vuelo>> CancelarVuelo(int id)
+    public async Task<Result<VueloDTO>> CancelarVuelo(int id)
     {
-        Vuelo? vuelo = await ConsultarVuelo(id);
-        if (vuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
+        var vuelo = await db.Vuelos
+            .Include(v => v.Reservas)
+            .FirstOrDefaultAsync(v => v.Id == id);
+
+        if (vuelo == null)
+            return Result<VueloDTO>.Fail("El vuelo no existe");
+
+        foreach (var reserva in vuelo.Reservas)
+            reserva.Confirmado = false;
 
         vuelo.Estado = "cancelado";
         await db.SaveChangesAsync();
 
-        // llamar servicio cancelar reserva
-        return Result<Vuelo>.Ok(vuelo);
+        return Result<VueloDTO>.Ok(mapper.Map<VueloDTO>(vuelo));
     }
+
 
     public async Task<Result<Vuelo>> ConfirmarVuelo(int id)
     {
@@ -113,6 +172,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
         Vuelo dbVuelo = new()
         {
             Id = 0,
+            FlightCode = vuelo.FlightCode,
             Estado = "programado",
             Origen = vuelo.Origen,
             Destino = vuelo.Destino,

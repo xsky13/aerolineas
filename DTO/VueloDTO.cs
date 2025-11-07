@@ -1,10 +1,14 @@
+using Aerolineas.Models;
+
 namespace Aerolineas.DTO;
 
 public class VueloDTO
 {
     public int Id { get; set; }
+    public string FlightCode { get; set; }
     public string Estado { get; set; }
     public int? SlotId { get; set; }
+    public Slot? Slot { get; set; }
     public int Precio { get; set; }
     public string Origen { get; set; }
     public string Destino { get; set; }

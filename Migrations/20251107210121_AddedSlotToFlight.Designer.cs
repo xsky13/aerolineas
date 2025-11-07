@@ -4,6 +4,7 @@ using Aerolineas.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aerolineas.Migrations
 {
     [DbContext(typeof(AeroContext))]
-    partial class AeroContextModelSnapshot : ModelSnapshot
+    [Migration("20251107210121_AddedSlotToFlight")]
+    partial class AddedSlotToFlight
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,7 +114,7 @@ namespace Aerolineas.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Slots");
+                    b.ToTable("Slot");
                 });
 
             modelBuilder.Entity("Aerolineas.Models.Usuario", b =>
@@ -170,9 +173,8 @@ namespace Aerolineas.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FlightCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("FlightCode")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("HorarioLlegada")
                         .HasColumnType("datetime2");

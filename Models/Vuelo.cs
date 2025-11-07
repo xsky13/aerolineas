@@ -5,9 +5,11 @@ namespace Aerolineas.Models;
 public class Vuelo
 {
     public int Id { get; set; }
+    public string FlightCode { get; set; }
     public string Estado { get; set; }
     public string Origen { get; set; }
     public int? SlotId { get; set; }
+    public Slot? Slot { get; set; }
     public int? AeronaveId { get; set; } 
     public Aeronave? Aeronave { get; set; }
     public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();

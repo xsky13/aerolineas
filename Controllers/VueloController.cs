@@ -48,7 +48,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "admin")]
     [HttpPost("{id}/cancelar")]
-    public async Task<ActionResult<Vuelo>> Cancel(int id)
+    public async Task<ActionResult<VueloDTO>> Cancel(int id)
     {
         var response = await vuelosService.CancelarVuelo(id);
         return response.ToActionResult();
@@ -64,9 +64,9 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "admin")]
     [HttpPost("{id}/asignar_slot")]
-    public async Task<ActionResult<Vuelo>> AsignarSlot(int id)
+    public async Task<ActionResult<VueloDTO>> AsignarSlot(int id)
     {
-        Result<int> slotResponse = await vuelosService.BuscarSlot();
+        Result<SlotResponse> slotResponse = await vuelosService.GenerarSlot(id);
         if (slotResponse.Success)
         {
             var slot = await vuelosService.AsignarSlot(id, slotResponse.Value);
