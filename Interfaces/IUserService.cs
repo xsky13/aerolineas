@@ -9,6 +9,10 @@ public interface IUserService
     Task<Usuario?> Get(int id);
     Task<Usuario?> GetByEmail(string email);
     Task<List<Usuario>> GetAll();
+
+    Task<UsuarioDTO?> GetFull(int id);
+    Task<UsuarioDTO?> GetByEmailFull(string email);
+    Task<List<UsuarioDTO>> GetAllFull();
     Task<Result<Usuario>> Create(RegisterDTO registerDTO);
     Task<Result<Usuario>> Update(UpdateDTO updateDTO, int userId);
     Task<Result<bool>> Delete(int userId);

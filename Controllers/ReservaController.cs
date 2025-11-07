@@ -1,4 +1,5 @@
 using Aerolineas.Config;
+using Aerolineas.DTO;
 using Aerolineas.Models;
 using Aerolineas.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -21,20 +22,20 @@ public class ReservaController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Reserva>>> GetAll()
     {
-        var reservas = await _reservaService.GetAll();
+        var reservas = await _reservaService.GetAllFull();
         return Ok(reservas);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Reserva>> Get(int id)
     {
-        var reserva = await _reservaService.Get(id);
+        var reserva = await _reservaService.GetFull(id);
         if (reserva == null) return NotFound("Reserva no encontrada");
         return Ok(reserva);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Reserva>> Create(Reserva reserva)
+    public async Task<ActionResult<Reserva>> Create(CrearReservaDTO reserva)
     {
         var result = await _reservaService.Create(reserva);
         if (!result.Success) return BadRequest(result.Error);

@@ -1,11 +1,14 @@
 using Aerolineas.Config;
+using Aerolineas.DTO;
 using Aerolineas.Interfaces;
 using Aerolineas.Models;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class ReservaService(AeroContext dbContext) : IReservaService
+public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService userService, IVuelosService vuelosService) : IReservaService
 {
     public async Task<Reserva?> Get(int id)
     {
@@ -19,11 +22,38 @@ public class ReservaService(AeroContext dbContext) : IReservaService
         return reservas;
     }
 
-    public async Task<Result<Reserva>> Create(Reserva reserva)
+    public async Task<ReservaDTO?> GetFull(int id)
     {
-        dbContext.Reservas.Add(reserva);
+        var reserva = await dbContext.Reservas.ProjectTo<ReservaDTO>(mapper.ConfigurationProvider).FirstOrDefaultAsync(r => r.Id == id);
+        return reserva;
+    }
+
+    public async Task<List<ReservaDTO>> GetAllFull()
+    {
+        var reservas = await dbContext.Reservas.ProjectTo<ReservaDTO>(mapper.ConfigurationProvider).ToListAsync();
+        return reservas;
+    }
+
+    public async Task<Result<Reserva>> Create(CrearReservaDTO reserva)
+    {
+        var usuario = await userService.GetFull(reserva.UsuarioId);
+        if (usuario == null) return Result<Reserva>.Fail("Usuario no existe");
+
+        var vuelo = await vuelosService.ConsultarVueloFull(reserva.VueloId);
+        if (vuelo == null) return Result<Reserva>.Fail("Vuelo no existe");
+        // if (vuelo.SlotId == null) return Result<Reserva>.Fail("Vuelo no esta confirmado");
+
+
+        Reserva dbReserva = new Reserva()
+        {
+            UsuarioId = reserva.UsuarioId,
+            VueloId = reserva.VueloId,
+            FechaReserva = reserva.FechaReserva,
+            Confirmado = false
+        };
+        dbContext.Reservas.Add(dbReserva);
         await dbContext.SaveChangesAsync();
-        return Result<Reserva>.Ok(reserva);
+        return Result<Reserva>.Ok(dbReserva);
     }
 
     public async Task<Result<Reserva>> Update(Reserva reserva)
