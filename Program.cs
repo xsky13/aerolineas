@@ -1,6 +1,7 @@
 using System.Text;
 using Aerolineas.Config;
 using Aerolineas.Interfaces;
+using Aerolineas.Mapper;
 using Aerolineas.Models;
 using Aerolineas.Services;
 using DotNetEnv;
@@ -37,6 +38,8 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Jwt__Key") ?? throw new InvalidOperationException("No hay jwtkey")))
         };
     });
+
+builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();

@@ -8,5 +8,5 @@ public class AeronaveDTO
     public int Capacidad { get; set; }
     public int AnioFabricacion { get; set; }
     public bool EstadoOperativo { get; set; }
-    public VueloSimpleDTO? Vuelo { get; set; }
+    public List<VueloSimpleDTO>? Vuelos { get; set; }
 }

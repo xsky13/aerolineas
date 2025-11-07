@@ -2,12 +2,14 @@ using Aerolineas.Config;
 using Aerolineas.DTO;
 using Aerolineas.Interfaces;
 using Aerolineas.Models;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class VueloService(AeroContext db, IAeronaveService aeronaveService) : IVuelosService
+public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMapper mapper) : IVuelosService
 {
     public async Task<Result<Vuelo>> AsignarSlot(int id, int slotId)
     {
@@ -77,6 +79,20 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService) : IV
         return db.Vuelos.Include(v => v.Aeronave).ToListAsync();
     }
 
+    public async Task<VueloDTO?> ConsultarVueloFull(int id)
+    {
+        return await db.Vuelos
+            .ProjectTo<VueloDTO>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(v => v.Id == id);
+    }
+
+    public async Task<List<VueloDTO>> ConsultarVuelosFull()
+    {
+        return await db.Vuelos
+            .ProjectTo<VueloDTO>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
     public async Task<Result<Vuelo>> ModificarVuelo(int id, UpdateVueloDTO vuelo)
     {
         Vuelo? dbVuelo = await ConsultarVuelo(id);
@@ -109,20 +125,20 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService) : IV
         return dbVuelo;
     }
 
-    public async Task<Result<Vuelo>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO)
+    public async Task<Result<VueloDTO>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO)
     {
-        Vuelo? vuelo = await ConsultarVuelo(id);
+        var vuelo = await ConsultarVuelo(id);
         var aeronaveResponse = await aeronaveService.GetAeronaveById(aeronaveDTO.AeronaveId);
-        if (!aeronaveResponse.Success) return Result<Vuelo>.Fail(aeronaveResponse.Error, 404);
-        if (vuelo == null) return Result<Vuelo>.Fail("No existe el vuelo", 404);
+        if (!aeronaveResponse.Success) return Result<VueloDTO>.Fail(aeronaveResponse.Error, 404);
+        if (vuelo == null) return Result<VueloDTO>.Fail("No existe el vuelo", 404);
 
 
+        vuelo.AeronaveId = aeronaveResponse.Value.Id;
         vuelo.Aeronave = aeronaveResponse.Value;
-        var responseUpdateAeronave = await aeronaveService.UpdateAeronave(aeronaveDTO.AeronaveId, new UpdateAeronaveDTO() { Vuelo = vuelo });
 
-        if (!responseUpdateAeronave.Success) return Result<Vuelo>.Fail(responseUpdateAeronave.Error);
+        VueloDTO vueloResponse = mapper.Map<VueloDTO>(vuelo);
 
         await db.SaveChangesAsync();
-        return Result<Vuelo>.Ok(vuelo);
+        return Result<VueloDTO>.Ok(vueloResponse);
     }
 }

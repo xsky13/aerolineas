@@ -17,7 +17,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Vuelo>>> Get()
     {
-        var vuelos = await vuelosService.ConsultarVuelos();
+        var vuelos = await vuelosService.ConsultarVuelosFull();
         return Ok(vuelos);
     }
 
@@ -25,7 +25,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Vuelo>> GetById(int id)
     {
-        Vuelo? vuelo = await vuelosService.ConsultarVuelo(id);
+        var vuelo = await vuelosService.ConsultarVueloFull(id);
         if (vuelo == null) return NotFound();
         return Ok(vuelo);
     }
@@ -95,7 +95,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "admin")]
     [HttpPost("{id}/aeronave")]
-    public async Task<ActionResult<Vuelo>> CambiarAeronave([FromBody] CambiarAeronaveDTO aeronaveDTO, int id)
+    public async Task<ActionResult<VueloDTO>> CambiarAeronave([FromBody] CambiarAeronaveDTO aeronaveDTO, int id)
     {
         var response = await vuelosService.AsignarAeronave(id, aeronaveDTO);
         return response.ToActionResult();

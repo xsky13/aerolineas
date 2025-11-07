@@ -14,7 +14,9 @@ public interface IVuelosService
     Task<Result<Vuelo>> CancelarVuelo(int id);
     Task<Result<Vuelo>> ConfirmarVuelo(int id);
     Task<Result<int>> BuscarSlot();
-    Task<Result<Vuelo>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO);
+    Task<Result<VueloDTO>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO);
     Task<Result<Vuelo>> AsignarSlot(int id, int slotId);
     Task<Result<Vuelo>> ProgramarVuelo(int id);
+    Task<VueloDTO?> ConsultarVueloFull(int id);
+    Task<List<VueloDTO>> ConsultarVuelosFull();
 }
