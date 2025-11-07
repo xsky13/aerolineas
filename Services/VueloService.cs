@@ -100,6 +100,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
 
         if (vuelo.Origen != null) dbVuelo.Origen = vuelo.Origen;
         if (vuelo.Destino != null) dbVuelo.Destino = vuelo.Destino;
+        if (vuelo.Precio != null) dbVuelo.Precio = (int)vuelo.Precio;
         if (vuelo.HorarioSalida != null && vuelo.HorarioSalida != default) dbVuelo.HorarioSalida = (DateTime)vuelo.HorarioSalida;
         if (vuelo.HorarioLlegada != null && vuelo.HorarioLlegada != default) dbVuelo.HorarioLlegada = (DateTime)vuelo.HorarioLlegada;
 
@@ -116,7 +117,8 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
             Origen = vuelo.Origen,
             Destino = vuelo.Destino,
             HorarioSalida = vuelo.HorarioSalida,
-            HorarioLlegada = vuelo.HorarioLlegada
+            HorarioLlegada = vuelo.HorarioLlegada,
+            Precio = vuelo.Precio
         };
 
         db.Vuelos.Add(dbVuelo);
