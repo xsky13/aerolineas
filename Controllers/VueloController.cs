@@ -23,7 +23,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Vuelo>> GetById(int id)
+    public async Task<ActionResult<VueloDTO>> GetById(int id)
     {
         var vuelo = await vuelosService.ConsultarVueloFull(id);
         if (vuelo == null) return NotFound();

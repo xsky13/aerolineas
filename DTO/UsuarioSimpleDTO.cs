@@ -1,10 +1,7 @@
-using System.ComponentModel.DataAnnotations;
+namespace Aerolineas.DTO;
 
-namespace Aerolineas.Models;
-
-public class Usuario
+public class UsuarioSimpleDTO
 {
-    [Key]
     public int Id { get; set; }
     public string Nombre { get; set; }
     public string Apellido { get; set; }
@@ -12,6 +9,4 @@ public class Usuario
     public string Email { get; set; }
     public string PasswordHash { get; set; }
     public string Rol { get; set; }
-    public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
-
 }

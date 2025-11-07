@@ -46,6 +46,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UsuarioService>();
 builder.Services.AddScoped<IAeronaveService, AeronaveService>();
 builder.Services.AddScoped<IVuelosService, VueloService>();
+builder.Services.AddScoped<IReservaService, ReservaService>();
 
 builder.Services.AddControllers();
 

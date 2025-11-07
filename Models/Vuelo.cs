@@ -10,6 +10,7 @@ public class Vuelo
     public int? SlotId { get; set; }
     public int? AeronaveId { get; set; } 
     public Aeronave? Aeronave { get; set; }
+    public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
     public string Destino { get; set; }
     public int Precio { get; set; }
     public DateTime HorarioSalida { get; set; }

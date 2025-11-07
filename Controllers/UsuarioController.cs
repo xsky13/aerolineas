@@ -14,17 +14,17 @@ public class UsuarioController(IUserService userService) : ControllerBase
 {
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<List<Usuario>>> Get()
+    public async Task<ActionResult<List<UsuarioDTO>>> Get()
     {
-        var usuarios = await userService.GetAll();
+        var usuarios = await userService.GetAllFull();
         return Ok(usuarios);
     }
 
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Usuario>> GetById(int id)
+    public async Task<ActionResult<UsuarioDTO>> GetById(int id)
     {
-        var usuario = await userService.Get(id);
+        var usuario = await userService.GetFull(id);
         if (usuario == null) return NotFound();
         return Ok(usuario);
     }

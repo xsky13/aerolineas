@@ -11,4 +11,5 @@ public class VueloDTO
     public DateTime HorarioSalida { get; set; }
     public DateTime HorarioLlegada { get; set; }
     public AeronaveSimpleDTO Aeronave { get; set; }
+    public List<ReservaSimpleDTO> Reservas { get; set; }
 }

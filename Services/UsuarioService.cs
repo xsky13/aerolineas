@@ -2,11 +2,13 @@ using Aerolineas.Config;
 using Aerolineas.DTO;
 using Aerolineas.Interfaces;
 using Aerolineas.Models;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class UsuarioService(AeroContext dbContext) : IUserService
+public class UsuarioService(AeroContext dbContext, IMapper mapper) : IUserService
 {
     public async Task<Usuario?> Get(int id)
     {
@@ -23,6 +25,24 @@ public class UsuarioService(AeroContext dbContext) : IUserService
     public async Task<List<Usuario>> GetAll()
     {
         var usuarios = await dbContext.Usuarios.ToListAsync();
+        return usuarios;
+    }
+
+    public async Task<UsuarioDTO?> GetFull(int id)
+    {
+        var usuario = await dbContext.Usuarios.ProjectTo<UsuarioDTO>(mapper.ConfigurationProvider).FirstOrDefaultAsync(u => u.Id == id);
+        return usuario;
+    }
+
+    public async Task<UsuarioDTO?> GetByEmailFull(string email)
+    {
+        var usuario = await dbContext.Usuarios.ProjectTo<UsuarioDTO>(mapper.ConfigurationProvider).FirstOrDefaultAsync(u => u.Email == email);
+        return usuario;
+    }
+
+    public async Task<List<UsuarioDTO>> GetAllFull()
+    {
+        var usuarios = await dbContext.Usuarios.ProjectTo<UsuarioDTO>(mapper.ConfigurationProvider).ToListAsync();
         return usuarios;
     }
 
