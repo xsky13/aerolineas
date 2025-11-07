@@ -41,6 +41,7 @@ builder.Services
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UsuarioService>();
+builder.Services.AddScoped<IAeronaveService, AeronaveService>();
 builder.Services.AddScoped<IVuelosService, VueloService>();
 
 builder.Services.AddControllers();
@@ -58,7 +59,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 

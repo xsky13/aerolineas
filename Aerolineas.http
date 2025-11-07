@@ -1,6 +1,58 @@
 @Aerolineas_HostAddress = http://localhost:5138
+@authToken = # Pega aquí el token que obtengas del login
 
-GET {{Aerolineas_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1. Registro de usuario
+POST {{Aerolineas_HostAddress}}/api/auth/register
+Content-Type: application/json
 
-###
+{
+    "email": "admin@aerolinea.com",
+    "password": "Admin123!",
+    "nombre": "Administrador",
+    "apellido": "Sistema"
+}
+
+### 2. Login para obtener token
+POST {{Aerolineas_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@aerolinea.com",
+    "password": "Admin123!"
+}
+
+### 3. Obtener todas las aeronaves
+GET {{Aerolineas_HostAddress}}/api/aeronaves
+Authorization: Bearer {{authToken}}
+
+### 4. Crear nueva aeronave
+POST {{Aerolineas_HostAddress}}/api/aeronaves
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "matricula": "XA-ABC",
+    "modelo": "Boeing 737-800",
+    "capacidad": 189,
+    "anioFabricacion": 2020,
+    "estadoOperativo": true
+}
+
+### 5. Obtener aeronave por ID
+GET {{Aerolineas_HostAddress}}/api/aeronaves/1
+Authorization: Bearer {{authToken}}
+
+### 6. Actualizar aeronave
+PUT {{Aerolineas_HostAddress}}/api/aeronaves/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "modelo": "Boeing 737-800 Updated",
+    "capacidad": 180,
+    "estadoOperativo": true
+}
+
+### 7. Eliminar aeronave
+DELETE {{Aerolineas_HostAddress}}/api/aeronaves/1
+Authorization: Bearer {{authToken}}
