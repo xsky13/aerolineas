@@ -18,7 +18,8 @@ public class MappingProfile : Profile
         CreateMap<Aeronave, AeronaveSimpleDTO>();
 
         CreateMap<Vuelo, VueloDTO>()
-            .ForMember(dest => dest.Aeronave, opt => opt.MapFrom(src => src.Aeronave));
+            .ForMember(dest => dest.Aeronave, opt => opt.MapFrom(src => src.Aeronave))
+            .ForMember(dest => dest.Reservas, opt => opt.MapFrom(src => src.Reservas));
 
         CreateMap<Reserva, ReservaDTO>()
             .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.Usuario))
