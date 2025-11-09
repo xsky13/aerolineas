@@ -3,7 +3,7 @@ using Aerolineas.DTO;
 using Aerolineas.DTO.Ticket;
 using Aerolineas.Models;
 
-namespace Aerolineas.Services;
+namespace Aerolineas.Interfaces;
 
 public interface ITicketService
 {
@@ -12,5 +12,5 @@ public interface ITicketService
     Task<Result<bool>> ValidarTicket(ValidarTicketDTO ticketDTO);
     Task<Ticket?> GetTicket(int id);
     Task<TicketDTO?> GetTicketFull(int id);
-    Task<List<TicketDTO>> GetAll(int id);
+    Task<List<TicketDTO>> GetAll();
 }

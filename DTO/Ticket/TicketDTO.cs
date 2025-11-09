@@ -6,8 +6,8 @@ public class TicketDTO
     public int NumeroTicket { get; set; }
     public int ReservaId { get; set; }
     public ReservaSimpleDTO Reserva { get; set; }
-    public UsuarioSimpleDTO UsuarioId { get; set; }
-    public int Usuario { get; set; }
+    public int UsuarioId { get; set; }
+    public UsuarioSimpleDTO Usuario { get; set; }
 }
 
 public class TicketSimpleDTO

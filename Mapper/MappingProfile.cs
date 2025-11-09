@@ -1,4 +1,5 @@
 using Aerolineas.DTO;
+using Aerolineas.DTO.Ticket;
 using Aerolineas.Models;
 using AutoMapper;
 namespace Aerolineas.Mapper;
@@ -14,12 +15,18 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Tickets, opt => opt.MapFrom(src => src.Tickets))
             .ForMember(dest => dest.Reservas, opt => opt.MapFrom(src => src.Reservas));
 
+        CreateMap<Ticket, TicketDTO>()
+            .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.Usuario))
+            .ForMember(dest => dest.Reserva, opt => opt.MapFrom(src => src.Reserva));
+        CreateMap<Ticket, TicketSimpleDTO>();
+
         CreateMap<Vuelo, VueloSimpleDTO>();
 
         CreateMap<Aeronave, AeronaveSimpleDTO>();
 
         CreateMap<Vuelo, VueloDTO>()
             .ForMember(dest => dest.Aeronave, opt => opt.MapFrom(src => src.Aeronave))
+            .ForMember(dest => dest.Slot, opt => opt.MapFrom(src => src.Slot))
             .ForMember(dest => dest.Reservas, opt => opt.MapFrom(src => src.Reservas));
 
         CreateMap<Reserva, ReservaDTO>()

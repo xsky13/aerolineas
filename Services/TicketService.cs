@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class TicketService(IMapper mapper, AeroContext db, IVuelosService vuelosService) : ITicketService
+public class TicketService(IMapper mapper, AeroContext db) : ITicketService
 {
     public async Task<Result<bool>> EliminarTicket(int id)
     {
@@ -36,7 +36,7 @@ public class TicketService(IMapper mapper, AeroContext db, IVuelosService vuelos
         return mapper.Map<TicketDTO>(ticket);
     }
 
-    public async Task<List<TicketDTO>> GetAll(int id)
+    public async Task<List<TicketDTO>> GetAll()
     {
         return await db.Tickets.ProjectTo<TicketDTO>(mapper.ConfigurationProvider).ToListAsync();
     }
@@ -55,12 +55,12 @@ public class TicketService(IMapper mapper, AeroContext db, IVuelosService vuelos
     public async Task<Result<bool>> ValidarTicket(ValidarTicketDTO ticketDTO)
     {
 
-        var vuelo = await vuelosService.GetVueloByFlightCode(ticketDTO.FlightCode);
+        var vuelo = await db.Vuelos.FirstOrDefaultAsync(v => v.FlightCode == ticketDTO.FlightCode);
         if (vuelo == null) return Result<bool>.Fail("El vuelo no existe");
         if (vuelo.Estado != "confirmado") return Result<bool>.Fail("El vuelo no esta confirmado");
 
 
-        var ticket = await db.Tickets.FirstOrDefaultAsync(t => t.Reserva.VueloId == vuelo.Id && t.NumeroTicket == ticketDTO.NumeroTicket);
+        var ticket = await db.Tickets.Include(t => t.Reserva).FirstOrDefaultAsync(t => t.Reserva.VueloId == vuelo.Id && t.NumeroTicket == ticketDTO.NumeroTicket);
         if (ticket == null) return Result<bool>.Fail("Ticket no existe");
         if (!ticket.Reserva.Confirmado) return Result<bool>.Fail("La reserva no esta confirmada");
 

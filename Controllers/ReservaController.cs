@@ -68,9 +68,9 @@ public class ReservaController : ControllerBase
     }
 
     [HttpPatch("{id}/cancelar")]
-    public async Task<ActionResult<ReservaDTO>> CancelarReserva([FromBody] ConfirmacionIdDTO dto, int id)
+    public async Task<ActionResult<ReservaDTO>> CancelarReserva(int id)
     {
-        var result = await _reservaService.CancelarReserva(id, dto.VueloId);
+        var result = await _reservaService.CancelarReserva(id);
         return result.ToActionResult();
     }
 }
