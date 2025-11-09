@@ -116,6 +116,13 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
             .FirstOrDefaultAsync(v => v.Id == id);
     }
 
+    public async Task<VueloDTO?> GetVueloByFlightCode(string flightCode)
+    {
+        return await db.Vuelos
+            .ProjectTo<VueloDTO>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(v => v.FlightCode == flightCode);
+    }
+
     public async Task<List<VueloDTO>> GetVuelosFull()
     {
         return await db.Vuelos

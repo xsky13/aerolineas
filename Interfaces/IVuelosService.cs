@@ -18,4 +18,5 @@ public interface IVuelosService
     Task<Result<VueloDTO>> ProgramarVuelo(int id);
     Task<VueloDTO?> GetVueloFull(int id);
     Task<List<VueloDTO>> GetVuelosFull();
+    Task<VueloDTO?> GetVueloByFlightCode(string flightCode);
 }

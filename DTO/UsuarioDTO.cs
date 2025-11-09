@@ -1,3 +1,5 @@
+using Aerolineas.DTO.Ticket;
+
 namespace Aerolineas.DTO;
 
 public class UsuarioDTO
@@ -10,4 +12,5 @@ public class UsuarioDTO
     public string PasswordHash { get; set; }
     public string Rol { get; set; }
     public List<ReservaSimpleDTO>? Reservas { get; set; }
+    public List<TicketSimpleDTO>? Tickets { get; set; }
 }

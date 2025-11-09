@@ -9,6 +9,7 @@ public class AeroContext : DbContext
     public DbSet<Vuelo> Vuelos { get; set; }
     public DbSet<Reserva> Reservas { get; set; }
     public DbSet<Slot> Slots { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

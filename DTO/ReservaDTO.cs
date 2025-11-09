@@ -1,3 +1,5 @@
+using Aerolineas.DTO.Ticket;
+
 namespace Aerolineas.DTO;
 
 public class ReservaDTO
@@ -9,4 +11,6 @@ public class ReservaDTO
     public VueloSimpleDTO Vuelo { get; set; }
     public DateTime FechaReserva { get; set; }
     public bool Confirmado { get; set; }
+    public List<TicketSimpleDTO>? Tickets { get; set; }
+
 }

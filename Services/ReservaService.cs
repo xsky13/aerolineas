@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService userService, IVuelosService vuelosService) : IReservaService
+public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService userService, IVuelosService vuelosService, ITicketService ticketService) : IReservaService
 {
     public async Task<Reserva?> Get(int id)
     {
@@ -97,20 +97,23 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
         return Result<Reserva>.Ok(reserva);
     }
 
-    public async Task<Result<Reserva>> CancelarReserva(int id, int vueloId)
+    public async Task<Result<ReservaDTO>> CancelarReserva(int id, int vueloId)
     {
-        var reserva = await Get(id);
-        if (reserva == null) return Result<Reserva>.Fail("La reserva no existe");
+        var reserva = await dbContext.Reservas.Include(r => r.Tickets).FirstOrDefaultAsync(r => r.Id == id);
+        if (reserva == null) return Result<ReservaDTO>.Fail("La reserva no existe");
 
         var vuelo = await vuelosService.GetVuelo(vueloId);
-        if (vuelo == null) return Result<Reserva>.Fail("El vuelo no existe");
+        if (vuelo == null) return Result<ReservaDTO>.Fail("El vuelo no existe");
 
         reserva.Confirmado = false;
-
+        foreach (var ticket in reserva.Tickets)
+        {
+            await ticketService.EliminarTicket(ticket.Id);
+        }
         
 
         await dbContext.SaveChangesAsync();
-        return Result<Reserva>.Ok(reserva);
+        return Result<ReservaDTO>.Ok(mapper.Map<ReservaDTO>(reserva));
     }
 
 
