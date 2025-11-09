@@ -35,6 +35,7 @@ public class ReservaService(AeroContext dbContext) : IReservaService
         existingReserva.VueloId = reserva.VueloId;
         existingReserva.FechaReserva = reserva.FechaReserva;
         existingReserva.Confirmado = reserva.Confirmado;
+        existingReserva.NumeroAsiento = reserva.NumeroAsiento;
 
         await dbContext.SaveChangesAsync();
         return Result<Reserva>.Ok(existingReserva);
@@ -54,7 +55,7 @@ public class ReservaService(AeroContext dbContext) : IReservaService
     {
         var reserva = await Get(id);
         if (reserva == null) return Result<Reserva>.Fail("La reserva no existe");
-        
+
         if (reserva.Confirmado)
             return Result<Reserva>.Fail("La reserva ya está confirmada");
 
