@@ -6,6 +6,7 @@ public class Slot
 {
     [Key]
     public int Id { get; set; }
+    public int SlotId { get; set; }
     public string FlightCode { get; set; }
     public string Runway { get; set; }
     public string Status { get; set; } = "pendiente";

@@ -16,4 +16,13 @@ public class AeroContext : DbContext
             ?? throw new InvalidOperationException("Database connection string is not set.");
         options.UseSqlServer(connectionString);
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Vuelo>()
+            .HasOne(v => v.Slot)
+            .WithMany()
+            .HasForeignKey(v => v.SlotId)
+            .OnDelete(DeleteBehavior.SetNull); // or Cascade
+    }
 }

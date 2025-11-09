@@ -4,51 +4,34 @@ using Aerolineas.Interfaces;
 using Aerolineas.Models;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMapper mapper) : IVuelosService
+public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlotService slotService, IMapper mapper) : IVuelosService
 {
     public async Task<Result<VueloDTO>> AsignarSlot(int id, SlotResponse slotResponse)
     {
         var vuelo = await GetVuelo(id);
         if (vuelo == null) return Result<VueloDTO>.Fail("El vuelo no existe", 404);
 
-        using var transaction = await db.Database.BeginTransactionAsync();
-        try
+        Slot slot = new Slot()
         {
-            await db.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT Slots ON");
+            SlotId = slotResponse.Id,
+            FlightCode = slotResponse.FlightCode,
+            Runway = slotResponse.Runway,
+            Status = slotResponse.Status,
+            GateId = slotResponse.GateId,
+            Date = slotResponse.Date,
+        };
 
-            Slot slot = new Slot()
-            {
-                Id = slotResponse.Id,
-                FlightCode = slotResponse.FlightCode,
-                Runway = slotResponse.Runway,
-                Status = slotResponse.Status,
-                GateId = slotResponse.GateId,
-                Date = slotResponse.Date,
-            };
-            db.Slots.Add(slot);
+        db.Slots.Add(slot);
+        await db.SaveChangesAsync();
 
-            // Guardar el slot primero
-            await db.SaveChangesAsync();
-            await db.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT Slots OFF");
+        vuelo.SlotId = slot.Id;
+        await db.SaveChangesAsync();
 
-            // Ahora asignar el slot al vuelo
-            vuelo.SlotId = slot.Id;
-            await db.SaveChangesAsync();
-
-            await transaction.CommitAsync();
-
-            return Result<VueloDTO>.Ok(mapper.Map<VueloDTO>(vuelo));
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        return Result<VueloDTO>.Ok(mapper.Map<VueloDTO>(vuelo));
     }
 
     public async Task<Result<bool>> EliminarVuelo(int id)
@@ -62,6 +45,9 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
 
         foreach (var reserva in vuelo.Reservas)
             reserva.Confirmado = false;
+
+        if (vuelo.Slot != null)
+            await slotService.CancelSlot(vuelo.Slot.Id);
 
         db.Vuelos.Remove(vuelo);
         await db.SaveChangesAsync();
@@ -81,6 +67,11 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
             reserva.Confirmado = false;
 
         vuelo.Estado = "cancelado";
+        if (vuelo.Slot != null)
+            await slotService.CancelSlot(vuelo.Slot.Id);
+
+        vuelo.SlotId = null;
+        vuelo.Slot = null;
         await db.SaveChangesAsync();
 
         return Result<VueloDTO>.Ok(mapper.Map<VueloDTO>(vuelo));
