@@ -21,8 +21,12 @@ public class TicketService(IMapper mapper, AeroContext db) : ITicketService
         return Result<bool>.Ok(true);
     }
 
-    public async Task<TicketDTO> EmitirTicket(CrearTicketDTO ticketDTO)
+    public async Task<Result<TicketDTO>> EmitirTicket(CrearTicketDTO ticketDTO)
     {
+        var reserva = await db.Reservas.FirstOrDefaultAsync(r => r.Id == ticketDTO.ReservaId);
+        if (reserva == null) return Result<TicketDTO>.Fail("La reserva no existe");
+        if (!reserva.Confirmado) return Result<TicketDTO>.Fail("La reserva no esta confirmada");
+
         Ticket ticket = new()
         {
             NumeroTicket = ticketDTO.NumeroTicket,
@@ -33,7 +37,7 @@ public class TicketService(IMapper mapper, AeroContext db) : ITicketService
         db.Tickets.Add(ticket);
         await db.SaveChangesAsync();
 
-        return mapper.Map<TicketDTO>(ticket);
+        return Result<TicketDTO>.Ok(mapper.Map<TicketDTO>(ticket));
     }
 
     public async Task<List<TicketDTO>> GetAll()
