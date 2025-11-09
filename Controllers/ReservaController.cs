@@ -60,10 +60,23 @@ public class ReservaController : ControllerBase
     }
 
     [HttpPatch("{id}/confirmar")]
-    public async Task<ActionResult<Reserva>> ConfirmarReserva(int id)
+    public async Task<ActionResult<Reserva>> ConfirmarReserva([FromBody] ConfirmacionIdDTO dto, int id)
     {
-        var result = await _reservaService.ConfirmarReserva(id);
+        var result = await _reservaService.ConfirmarReserva(id, dto.VueloId);
+        if (!result.Success) return BadRequest(result.Error);
+        return Ok(result.Value);
+    }
+
+    [HttpPatch("{id}/cancelar")]
+    public async Task<ActionResult<Reserva>> CancelarReserva([FromBody] ConfirmacionIdDTO dto, int id)
+    {
+        var result = await _reservaService.CancelarReserva(id, dto.VueloId);
         if (!result.Success) return BadRequest(result.Error);
         return Ok(result.Value);
     }
 }
+
+public class ConfirmacionIdDTO
+{
+    public int VueloId { get; set; }
+} 

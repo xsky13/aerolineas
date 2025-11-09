@@ -80,16 +80,39 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
         return Result<bool>.Ok(true);
     }
 
-    public async Task<Result<Reserva>> ConfirmarReserva(int id)
+    public async Task<Result<Reserva>> ConfirmarReserva(int id, int vueloId)
     {
         var reserva = await Get(id);
         if (reserva == null) return Result<Reserva>.Fail("La reserva no existe");
-        
+
         if (reserva.Confirmado)
             return Result<Reserva>.Fail("La reserva ya está confirmada");
+
+        var vuelo = await vuelosService.GetVuelo(vueloId);
+        if (vuelo == null) return Result<Reserva>.Fail("El vuelo no existe");
+        if (vuelo.Estado != "confirmado") return Result<Reserva>.Fail("El vuelo no esta confirmado");
 
         reserva.Confirmado = true;
         await dbContext.SaveChangesAsync();
         return Result<Reserva>.Ok(reserva);
     }
+
+    public async Task<Result<Reserva>> CancelarReserva(int id, int vueloId)
+    {
+        var reserva = await Get(id);
+        if (reserva == null) return Result<Reserva>.Fail("La reserva no existe");
+
+        var vuelo = await vuelosService.GetVuelo(vueloId);
+        if (vuelo == null) return Result<Reserva>.Fail("El vuelo no existe");
+
+        reserva.Confirmado = false;
+
+        
+
+        await dbContext.SaveChangesAsync();
+        return Result<Reserva>.Ok(reserva);
+    }
+
+
+
 }
