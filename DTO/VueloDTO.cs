@@ -1,3 +1,4 @@
+using Aerolineas.DTO.Asiento;
 using Aerolineas.Models;
 
 namespace Aerolineas.DTO;
@@ -16,4 +17,5 @@ public class VueloDTO
     public DateTime HorarioLlegada { get; set; }
     public AeronaveSimpleDTO Aeronave { get; set; }
     public List<ReservaSimpleDTO> Reservas { get; set; }
+    public List<AsientoSimpleDTO> Asientos { get; set; }
 }
