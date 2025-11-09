@@ -31,6 +31,7 @@ public class TicketController(ITicketService ticketService) : ControllerBase
     }
 
     // no necesita validacion de usuario
+    [Authorize]
     [HttpPost("{id}/validar")]
     public async Task<ActionResult<bool>> Validar([FromBody] ValidarTicketDTO ticketDTO,int id)
     {

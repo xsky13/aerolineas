@@ -2,6 +2,7 @@ using System.Text;
 using Aerolineas.Config;
 using Aerolineas.Interfaces;
 using Aerolineas.Mapper;
+using Aerolineas.Middleware;
 using Aerolineas.Models;
 using Aerolineas.Services;
 using DotNetEnv;
@@ -69,6 +70,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthentication();
 
