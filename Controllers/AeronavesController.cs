@@ -32,7 +32,7 @@ public class AeronavesController : ControllerBase
         return result.ToActionResult();
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<Aeronave>> Create(CreateAeronaveDTO dto)
     {
@@ -40,7 +40,7 @@ public class AeronavesController : ControllerBase
         return result.ToActionResult();
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<Aeronave>> Update(int id, UpdateAeronaveDTO dto)
     {
@@ -49,7 +49,7 @@ public class AeronavesController : ControllerBase
     }
 
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> Delete(int id)
     {
