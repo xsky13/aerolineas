@@ -12,10 +12,10 @@ public interface IVuelosService
     Task<Result<Vuelo>> ModificarVuelo(int id, UpdateVueloDTO vuelo);
     Task<Result<bool>> EliminarVuelo(int id);
     Task<Result<VueloDTO>> CancelarVuelo(int id);
-    Task<Result<Vuelo>> ConfirmarVuelo(int id);
+    Task<Result<VueloDTO>> ConfirmarVuelo(int id);
     Task<Result<VueloDTO>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO);
     Task<Result<VueloDTO>> AsignarSlot(int id, SlotResponse slotResponse);
-    Task<Result<Vuelo>> ProgramarVuelo(int id);
+    Task<Result<VueloDTO>> ProgramarVuelo(int id);
     Task<VueloDTO?> GetVueloFull(int id);
     Task<List<VueloDTO>> GetVuelosFull();
 }

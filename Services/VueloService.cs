@@ -58,6 +58,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
     {
         var vuelo = await db.Vuelos
             .Include(v => v.Reservas)
+            .Include(v => v.Slot)
             .FirstOrDefaultAsync(v => v.Id == id);
 
         if (vuelo == null)
@@ -78,24 +79,24 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
     }
 
 
-    public async Task<Result<Vuelo>> ConfirmarVuelo(int id)
+    public async Task<Result<VueloDTO>> ConfirmarVuelo(int id)
     {
         Vuelo? vuelo = await GetVuelo(id);
-        if (vuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
+        if (vuelo == null) return Result<VueloDTO>.Fail("El vuelo no existe");
 
         vuelo.Estado = "confirmado";
         await db.SaveChangesAsync();
-        return Result<Vuelo>.Ok(vuelo);
+        return Result<VueloDTO>.Ok(mapper.Map<VueloDTO>(vuelo));
     }
 
-    public async Task<Result<Vuelo>> ProgramarVuelo(int id)
+    public async Task<Result<VueloDTO>> ProgramarVuelo(int id)
     {
         Vuelo? vuelo = await GetVuelo(id);
-        if (vuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
+        if (vuelo == null) return Result<VueloDTO>.Fail("El vuelo no existe");
 
         vuelo.Estado = "programado";
         await db.SaveChangesAsync();
-        return Result<Vuelo>.Ok(vuelo);
+        return Result<VueloDTO>.Ok(mapper.Map<VueloDTO>(vuelo));
     }
 
     public async Task<Vuelo?> GetVuelo(int id)

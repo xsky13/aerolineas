@@ -78,7 +78,7 @@ public class VueloController(IVuelosService vuelosService, ISlotService slotServ
 
     [Authorize(Roles = "admin")]
     [HttpPost("{id}/confirmar")]
-    public async Task<ActionResult<Vuelo>> ConfirmarVuelo(int id)
+    public async Task<ActionResult<VueloDTO>> ConfirmarVuelo(int id)
     {
         var response = await vuelosService.ConfirmarVuelo(id);
         return response.ToActionResult();
@@ -86,7 +86,7 @@ public class VueloController(IVuelosService vuelosService, ISlotService slotServ
 
     [Authorize(Roles = "admin")]
     [HttpPost("{id}/programar")]
-    public async Task<ActionResult<Vuelo>> ProgramarVuelo(int id)
+    public async Task<ActionResult<VueloDTO>> ProgramarVuelo(int id)
     {
         var response = await vuelosService.ProgramarVuelo(id);
         return response.ToActionResult();

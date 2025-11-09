@@ -34,6 +34,10 @@ public class SlotService(AeroContext db) : ISlotService
         // llamar api
         // eliminar slot
         var slot = await db.Slots.FirstOrDefaultAsync(slot => slot.Id == id);
+
+        if (slot == null)
+            return Result<bool>.Fail("El slot no existe", 404);
+        
         db.Slots.Remove(slot);
         await db.SaveChangesAsync();
 
