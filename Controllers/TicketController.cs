@@ -32,15 +32,15 @@ public class TicketController(ITicketService ticketService) : ControllerBase
 
     // no necesita validacion de usuario
     [Authorize]
-    [HttpPost("{id}/validar")]
-    public async Task<ActionResult<bool>> Validar([FromBody] ValidarTicketDTO ticketDTO,int id)
+    [HttpPost("validar")]
+    public async Task<ActionResult<bool>> Validar([FromBody] ValidarTicketDTO ticketDTO)
     {
         var result = await ticketService.ValidarTicket(ticketDTO);
         return result.ToActionResult();
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<ActionResult<TicketDTO>> Get()
     {
         var result = await ticketService.GetAll();
