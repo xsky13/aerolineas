@@ -10,6 +10,7 @@ public class AeroContext : DbContext
     public DbSet<Reserva> Reservas { get; set; }
     public DbSet<Slot> Slots { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<Asiento> Asientos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -27,7 +28,13 @@ public class AeroContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Vuelo>()
-            .HasMany(u => u.Reservas)
+            .HasMany(v => v.Reservas)
+            .WithOne(t => t.Vuelo)
+            .HasForeignKey(t => t.VueloId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Vuelo>()
+            .HasMany(v => v.Asientos)
             .WithOne(t => t.Vuelo)
             .HasForeignKey(t => t.VueloId)
             .OnDelete(DeleteBehavior.Cascade);
