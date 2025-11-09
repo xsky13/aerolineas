@@ -13,7 +13,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
 {
     public async Task<Result<VueloDTO>> AsignarSlot(int id, SlotResponse slotResponse)
     {
-        var vuelo = await ConsultarVuelo(id);
+        var vuelo = await GetVuelo(id);
         if (vuelo == null) return Result<VueloDTO>.Fail("El vuelo no existe", 404);
 
         using var transaction = await db.Database.BeginTransactionAsync();
@@ -50,27 +50,6 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
             throw;
         }
     }
-
-    public async Task<Result<SlotResponse>> GenerarSlot(int id)
-    {
-        SlotResponse slotResponse = new SlotResponse()
-        {
-            Id = 12345,
-            Date = DateTime.Parse("2025-11-20T14:30:00Z"),
-            Runway = "Pista 1",
-            GateId = 42,
-            Status = "Reservado",
-            FlightCode = "AR1234",
-            ReservationExpiresAt = DateTime.Parse("2025-11-20T14:45:00Z")
-        };
-        return Result<SlotResponse>.Ok(slotResponse);
-    }
-
-    public async Task<Result<int>> BuscarSlot()
-    {
-        return Result<int>.Ok(1);
-    }
-
 
     public async Task<Result<bool>> EliminarVuelo(int id)
     {
@@ -110,7 +89,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
 
     public async Task<Result<Vuelo>> ConfirmarVuelo(int id)
     {
-        Vuelo? vuelo = await ConsultarVuelo(id);
+        Vuelo? vuelo = await GetVuelo(id);
         if (vuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
 
         vuelo.Estado = "confirmado";
@@ -120,7 +99,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
 
     public async Task<Result<Vuelo>> ProgramarVuelo(int id)
     {
-        Vuelo? vuelo = await ConsultarVuelo(id);
+        Vuelo? vuelo = await GetVuelo(id);
         if (vuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
 
         vuelo.Estado = "programado";
@@ -128,24 +107,24 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
         return Result<Vuelo>.Ok(vuelo);
     }
 
-    public async Task<Vuelo?> ConsultarVuelo(int id)
+    public async Task<Vuelo?> GetVuelo(int id)
     {
         return await db.Vuelos.Include(v => v.Aeronave).FirstOrDefaultAsync(v => v.Id == id);
     }
 
-    public Task<List<Vuelo>> ConsultarVuelos()
+    public Task<List<Vuelo>> GetVuelos()
     {
         return db.Vuelos.Include(v => v.Aeronave).ToListAsync();
     }
 
-    public async Task<VueloDTO?> ConsultarVueloFull(int id)
+    public async Task<VueloDTO?> GetVueloFull(int id)
     {
         return await db.Vuelos
             .ProjectTo<VueloDTO>(mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(v => v.Id == id);
     }
 
-    public async Task<List<VueloDTO>> ConsultarVuelosFull()
+    public async Task<List<VueloDTO>> GetVuelosFull()
     {
         return await db.Vuelos
             .ProjectTo<VueloDTO>(mapper.ConfigurationProvider)
@@ -154,7 +133,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
 
     public async Task<Result<Vuelo>> ModificarVuelo(int id, UpdateVueloDTO vuelo)
     {
-        Vuelo? dbVuelo = await ConsultarVuelo(id);
+        Vuelo? dbVuelo = await GetVuelo(id);
         if (dbVuelo == null) return Result<Vuelo>.Fail("El vuelo no existe");
 
         if (vuelo.Origen != null) dbVuelo.Origen = vuelo.Origen;
@@ -189,7 +168,7 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, IMap
 
     public async Task<Result<VueloDTO>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO)
     {
-        var vuelo = await ConsultarVuelo(id);
+        var vuelo = await GetVuelo(id);
         var aeronaveResponse = await aeronaveService.GetAeronaveById(aeronaveDTO.AeronaveId);
         if (!aeronaveResponse.Success) return Result<VueloDTO>.Fail(aeronaveResponse.Error, 404);
         if (vuelo == null) return Result<VueloDTO>.Fail("No existe el vuelo", 404);

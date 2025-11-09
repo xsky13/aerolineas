@@ -39,7 +39,7 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
         var usuario = await userService.GetFull(reserva.UsuarioId);
         if (usuario == null) return Result<Reserva>.Fail("Usuario no existe");
 
-        var vuelo = await vuelosService.ConsultarVueloFull(reserva.VueloId);
+        var vuelo = await vuelosService.GetVueloFull(reserva.VueloId);
         if (vuelo == null) return Result<Reserva>.Fail("Vuelo no existe");
         // if (vuelo.SlotId == null) return Result<Reserva>.Fail("Vuelo no esta confirmado");
 

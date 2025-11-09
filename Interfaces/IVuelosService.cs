@@ -6,18 +6,16 @@ namespace Aerolineas.Interfaces;
 
 public interface IVuelosService
 {
-    Task<List<Vuelo>> ConsultarVuelos();
-    Task<Vuelo?> ConsultarVuelo(int id);
+    Task<List<Vuelo>> GetVuelos();
+    Task<Vuelo?> GetVuelo(int id);
     Task<Vuelo> RegistrarVuelo(CrearVueloDTO vuelo);
     Task<Result<Vuelo>> ModificarVuelo(int id, UpdateVueloDTO vuelo);
     Task<Result<bool>> EliminarVuelo(int id);
     Task<Result<VueloDTO>> CancelarVuelo(int id);
     Task<Result<Vuelo>> ConfirmarVuelo(int id);
-    Task<Result<int>> BuscarSlot();
     Task<Result<VueloDTO>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO);
     Task<Result<VueloDTO>> AsignarSlot(int id, SlotResponse slotResponse);
     Task<Result<Vuelo>> ProgramarVuelo(int id);
-    Task<VueloDTO?> ConsultarVueloFull(int id);
-    Task<List<VueloDTO>> ConsultarVuelosFull();
-    Task<Result<SlotResponse>> GenerarSlot(int id);
+    Task<VueloDTO?> GetVueloFull(int id);
+    Task<List<VueloDTO>> GetVuelosFull();
 }

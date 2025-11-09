@@ -11,13 +11,13 @@ namespace Aerolineas.Controllers;
 
 [ApiController]
 [Route("api/vuelos")]
-public class VueloController(IVuelosService vuelosService) : ControllerBase
+public class VueloController(IVuelosService vuelosService, ISlotService slotService) : ControllerBase
 {
     [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<Vuelo>>> Get()
     {
-        var vuelos = await vuelosService.ConsultarVuelosFull();
+        var vuelos = await vuelosService.GetVuelosFull();
         return Ok(vuelos);
     }
 
@@ -25,7 +25,7 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<VueloDTO>> GetById(int id)
     {
-        var vuelo = await vuelosService.ConsultarVueloFull(id);
+        var vuelo = await vuelosService.GetVueloFull(id);
         if (vuelo == null) return NotFound();
         return Ok(vuelo);
     }
@@ -64,17 +64,16 @@ public class VueloController(IVuelosService vuelosService) : ControllerBase
 
     [Authorize(Roles = "admin")]
     [HttpPost("{id}/asignar_slot")]
-    public async Task<ActionResult<VueloDTO>> AsignarSlot(int id)
+    public async Task<ActionResult<VueloDTO>> AsignarSlot([FromBody] SlotRequestDTO slotRequest, int id)
     {
-        Result<SlotResponse> slotResponse = await vuelosService.GenerarSlot(id);
-        if (slotResponse.Success)
-        {
-            var slot = await vuelosService.AsignarSlot(id, slotResponse.Value);
-            return slot.ToActionResult();
-        }
+        var slotIdResponse = await slotService.ReservarSlot(id, slotRequest);
+        if (!slotIdResponse.Success) return BadRequest(new { error = slotIdResponse.Error });
 
+        var slotResponse = await slotService.GetSlot(slotIdResponse.Value);
+        if (!slotResponse.Success) return BadRequest(new { error = slotResponse.Error });
 
-        return BadRequest(new { error = "No hay slot" });
+        var slot = await vuelosService.AsignarSlot(id, slotResponse.Value!);
+        return slot.ToActionResult();
     }
 
     [Authorize(Roles = "admin")]
