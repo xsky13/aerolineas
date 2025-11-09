@@ -4,6 +4,7 @@ using Aerolineas.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aerolineas.Migrations
 {
     [DbContext(typeof(AeroContext))]
-    partial class AeroContextModelSnapshot : ModelSnapshot
+    [Migration("20251109125444_AddedTickets")]
+    partial class AddedTickets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,13 +137,18 @@ namespace Aerolineas.Migrations
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
+                    b.Property<int>("VueloId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ReservaId");
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Tickets");
+                    b.HasIndex("VueloId");
+
+                    b.ToTable("Ticket");
                 });
 
             modelBuilder.Entity("Aerolineas.Models.Usuario", b =>
@@ -261,9 +269,17 @@ namespace Aerolineas.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Aerolineas.Models.Vuelo", "Vuelo")
+                        .WithMany("Tickets")
+                        .HasForeignKey("VueloId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Reserva");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("Vuelo");
                 });
 
             modelBuilder.Entity("Aerolineas.Models.Vuelo", b =>
@@ -302,6 +318,8 @@ namespace Aerolineas.Migrations
             modelBuilder.Entity("Aerolineas.Models.Vuelo", b =>
                 {
                     b.Navigation("Reservas");
+
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }

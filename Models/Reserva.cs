@@ -9,4 +9,5 @@ public class Reserva
     public Vuelo Vuelo { get; set; }
     public DateTime FechaReserva { get; set; }
     public bool Confirmado { get; set; }
+    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 }

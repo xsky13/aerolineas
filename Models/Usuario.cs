@@ -13,5 +13,6 @@ public class Usuario
     public string PasswordHash { get; set; }
     public string Rol { get; set; }
     public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
+    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 
 }

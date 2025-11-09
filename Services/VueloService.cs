@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aerolineas.Services;
 
-public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlotService slotService, IMapper mapper) : IVuelosService
+public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlotService slotService, IMapper mapper, IReservaService reservaService) : IVuelosService
 {
     public async Task<Result<VueloDTO>> AsignarSlot(int id, SlotResponse slotResponse)
     {
@@ -43,8 +43,9 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
         if (vuelo == null)
             return Result<bool>.Fail("El vuelo no existe");
 
-        foreach (var reserva in vuelo.Reservas)
-            reserva.Confirmado = false;
+        var reservasToDelete = vuelo.Reservas.ToList();
+        foreach (var reserva in reservasToDelete)
+            await reservaService.Delete(reserva.Id);
 
         if (vuelo.Slot != null)
             await slotService.CancelSlot(vuelo.Slot.Id);
@@ -64,8 +65,9 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
         if (vuelo == null)
             return Result<VueloDTO>.Fail("El vuelo no existe");
 
-        foreach (var reserva in vuelo.Reservas)
-            reserva.Confirmado = false;
+        var reservasToCancel = vuelo.Reservas.ToList();
+        foreach (var reserva in reservasToCancel)
+            await reservaService.CancelarReserva(reserva.Id);
 
         vuelo.Estado = "cancelado";
         if (vuelo.Slot != null)
@@ -114,6 +116,13 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
         return await db.Vuelos
             .ProjectTo<VueloDTO>(mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(v => v.Id == id);
+    }
+
+    public async Task<VueloDTO?> GetVueloByFlightCode(string flightCode)
+    {
+        return await db.Vuelos
+            .ProjectTo<VueloDTO>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(v => v.FlightCode == flightCode);
     }
 
     public async Task<List<VueloDTO>> GetVuelosFull()
@@ -167,7 +176,6 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
 
 
         vuelo.AeronaveId = aeronaveResponse.Value.Id;
-        vuelo.Aeronave = aeronaveResponse.Value;
 
         VueloDTO vueloResponse = mapper.Map<VueloDTO>(vuelo);
 
