@@ -34,6 +34,7 @@ public class ReservaController : ControllerBase
         return Ok(reserva);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<Reserva>> Create(CrearReservaDTO reserva)
     {
@@ -42,6 +43,7 @@ public class ReservaController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = result.Value?.Id }, result.Value);
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<ActionResult<Reserva>> Update(int id, Reserva reserva)
     {
@@ -51,6 +53,7 @@ public class ReservaController : ControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult<bool>> Delete(int id)
     {
@@ -59,6 +62,7 @@ public class ReservaController : ControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize]
     [HttpPatch("{id}/confirmar")]
     public async Task<ActionResult<Reserva>> ConfirmarReserva(int id)
     {
@@ -67,6 +71,7 @@ public class ReservaController : ControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize]
     [HttpPatch("{id}/cancelar")]
     public async Task<ActionResult<ReservaDTO>> CancelarReserva(int id)
     {
