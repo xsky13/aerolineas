@@ -46,9 +46,15 @@ public class AeroContext : DbContext
             .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Reserva>()
-            .HasOne(v => v.Asiento)
+            .HasOne(r => r.Asiento)
             .WithMany()
-            .HasForeignKey(v => v.AsientoId)
+            .HasForeignKey(r => r.AsientoId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Ticket>()
+            .HasOne(t => t.Asiento)
+            .WithMany()
+            .HasForeignKey(t => t.AsientoId)
             .OnDelete(DeleteBehavior.NoAction);
 
         // When deleting a user → delete their tickets

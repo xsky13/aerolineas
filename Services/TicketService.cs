@@ -31,7 +31,8 @@ public class TicketService(IMapper mapper, AeroContext db) : ITicketService
         {
             NumeroTicket = ticketDTO.NumeroTicket,
             ReservaId = ticketDTO.ReservaId,
-            UsuarioId = ticketDTO.UsuarioId
+            UsuarioId = ticketDTO.UsuarioId,
+            AsientoId = reserva.AsientoId
         };
 
         db.Tickets.Add(ticket);

@@ -11,24 +11,26 @@ public class MappingProfile : Profile
     {
 
         CreateMap<Asiento, AsientoSimpleDTO>();
+        CreateMap<Usuario, UsuarioSimpleDTO>();
+        CreateMap<Ticket, TicketSimpleDTO>();
+        CreateMap<Reserva, ReservaSimpleDTO>();
+        CreateMap<Vuelo, VueloSimpleDTO>();
+        CreateMap<Aeronave, AeronaveSimpleDTO>();
+
         CreateMap<Asiento, AsientoDTO>()
             .ForMember(dest => dest.Vuelo, opt => opt.MapFrom(src => src.Vuelo));
 
-        CreateMap<Reserva, ReservaSimpleDTO>();
+        CreateMap<Aeronave, AeronaveDTO>()
+            .ForMember(dest => dest.Vuelos, opt => opt.MapFrom(src => src.Vuelos));
 
-        CreateMap<Usuario, UsuarioSimpleDTO>();
         CreateMap<Usuario, UsuarioDTO>()
             .ForMember(dest => dest.Tickets, opt => opt.MapFrom(src => src.Tickets))
             .ForMember(dest => dest.Reservas, opt => opt.MapFrom(src => src.Reservas));
 
         CreateMap<Ticket, TicketDTO>()
             .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.Usuario))
+            .ForMember(dest => dest.Asiento, opt => opt.MapFrom(src => src.Asiento))
             .ForMember(dest => dest.Reserva, opt => opt.MapFrom(src => src.Reserva));
-        CreateMap<Ticket, TicketSimpleDTO>();
-
-        CreateMap<Vuelo, VueloSimpleDTO>();
-
-        CreateMap<Aeronave, AeronaveSimpleDTO>();
 
         CreateMap<Vuelo, VueloDTO>()
             .ForMember(dest => dest.Aeronave, opt => opt.MapFrom(src => src.Aeronave))
@@ -41,8 +43,5 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Tickets, opt => opt.MapFrom(src => src.Tickets))
             .ForMember(dest => dest.Asiento, opt => opt.MapFrom(src => src.Asiento))
             .ForMember(dest => dest.Vuelo, opt => opt.MapFrom(src => src.Vuelo));
-
-        CreateMap<Aeronave, AeronaveDTO>()
-            .ForMember(dest => dest.Vuelos, opt => opt.MapFrom(src => src.Vuelos));
     }
 }

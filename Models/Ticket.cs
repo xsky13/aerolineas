@@ -11,4 +11,6 @@ public class Ticket
     public Reserva Reserva { get; set; }
     public int UsuarioId { get; set; }
     public Usuario Usuario { get; set; }
+    public int AsientoId { get; set; } 
+    public Asiento Asiento { get; set; }
 }

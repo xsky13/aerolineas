@@ -87,7 +87,7 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
         return Result<bool>.Ok(true);
     }
 
-    public async Task<Result<ReservaDTO>> ConfirmarReserva(int id, int vueloId)
+    public async Task<Result<ReservaDTO>> ConfirmarReserva(int id)
     {
         var reserva = await Get(id);
         if (reserva == null) return Result<ReservaDTO>.Fail("La reserva no existe");

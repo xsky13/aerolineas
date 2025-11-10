@@ -40,7 +40,7 @@ public class TicketController(ITicketService ticketService) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("all")]
+    [HttpGet]
     public async Task<ActionResult<TicketDTO>> Get()
     {
         var result = await ticketService.GetAll();

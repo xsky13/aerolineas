@@ -7,5 +7,5 @@ public class ReservaSimpleDTO
     public int VueloId { get; set; }
     public DateTime FechaReserva { get; set; }
     public bool Confirmado { get; set; }
-    public int AsientoId { get; set; }
+    public int NumeroAsiento { get; set; }
 }
