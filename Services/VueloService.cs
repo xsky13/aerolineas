@@ -147,24 +147,27 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
         return Result<Vuelo>.Ok(dbVuelo);
     }
 
-    public async Task<Vuelo> RegistrarVuelo(CrearVueloDTO vuelo)
+    public async Task<VueloDTO> RegistrarVuelo(CrearVueloDTO vuelo)
     {
+
         Vuelo dbVuelo = new()
         {
-            Id = 0,
             FlightCode = vuelo.FlightCode,
             Estado = "programado",
             Origen = vuelo.Origen,
             Destino = vuelo.Destino,
             HorarioSalida = vuelo.HorarioSalida,
             HorarioLlegada = vuelo.HorarioLlegada,
-            Precio = vuelo.Precio
+            Precio = vuelo.Precio,
+            Asientos = [.. Enumerable.Range(1, 50).Select(i => new Asiento { NumeroAsiento = i })]
         };
 
         db.Vuelos.Add(dbVuelo);
         await db.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
-        return dbVuelo;
+
+        return mapper.Map<VueloDTO>(dbVuelo);
     }
 
     public async Task<Result<VueloDTO>> AsignarAeronave(int id, CambiarAeronaveDTO aeronaveDTO)

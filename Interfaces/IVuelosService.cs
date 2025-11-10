@@ -8,7 +8,7 @@ public interface IVuelosService
 {
     Task<List<Vuelo>> GetVuelos();
     Task<Vuelo?> GetVuelo(int id);
-    Task<Vuelo> RegistrarVuelo(CrearVueloDTO vuelo);
+    Task<VueloDTO> RegistrarVuelo(CrearVueloDTO vuelo);
     Task<Result<Vuelo>> ModificarVuelo(int id, UpdateVueloDTO vuelo);
     Task<Result<bool>> EliminarVuelo(int id);
     Task<Result<VueloDTO>> CancelarVuelo(int id);

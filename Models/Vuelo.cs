@@ -13,6 +13,7 @@ public class Vuelo
     public int? AeronaveId { get; set; } 
     public Aeronave? Aeronave { get; set; }
     public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
+    public ICollection<Asiento> Asientos { get; set; } = new List<Asiento>();
     public string Destino { get; set; }
     public int Precio { get; set; }
     public DateTime HorarioSalida { get; set; }

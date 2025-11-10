@@ -43,13 +43,19 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
         if (vuelo == null) return Result<Reserva>.Fail("Vuelo no existe");
         if (vuelo.Estado != "confirmado" || vuelo.SlotId == null) return Result<Reserva>.Fail("Vuelo no esta confirmado");
 
+        var asiento = await dbContext.Asientos.FirstOrDefaultAsync(a => a.Id == reserva.AsientoId);
+        if (asiento == null) return Result<Reserva>.Fail("El asiento no existe");
+        if (asiento.Ocupado) return Result<Reserva>.Fail("El asiento ya esta ocupado");
+
+        asiento.Ocupado = true;
 
         Reserva dbReserva = new Reserva()
         {
             UsuarioId = reserva.UsuarioId,
             VueloId = reserva.VueloId,
             FechaReserva = reserva.FechaReserva,
-            Confirmado = false
+            Confirmado = false,
+            AsientoId = reserva.AsientoId
         };
         dbContext.Reservas.Add(dbReserva);
         await dbContext.SaveChangesAsync();
@@ -72,21 +78,19 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
 
     public async Task<Result<bool>> Delete(int id)
     {
-        var reserva = await dbContext.Reservas.Include(r => r.Tickets).FirstOrDefaultAsync(r => r.Id == id);
+        var reserva = await dbContext.Reservas.Include(r => r.Tickets).Include(r => r.Asiento).FirstOrDefaultAsync(r => r.Id == id);
         if (reserva == null) return Result<bool>.Fail("La reserva no existe");
 
-        var ticketsToDelete = reserva.Tickets.ToList();
-        foreach (var ticket in ticketsToDelete)
-        {
-            await ticketService.EliminarTicket(ticket.Id);
-        }
+        dbContext.Tickets.RemoveRange(reserva.Tickets);
 
+        if (reserva.Asiento != null)
+            reserva.Asiento.Ocupado = false;
         dbContext.Reservas.Remove(reserva);
         await dbContext.SaveChangesAsync();
         return Result<bool>.Ok(true);
     }
 
-    public async Task<Result<ReservaDTO>> ConfirmarReserva(int id, int vueloId)
+    public async Task<Result<ReservaDTO>> ConfirmarReserva(int id)
     {
         var reserva = await Get(id);
         if (reserva == null) return Result<ReservaDTO>.Fail("La reserva no existe");
@@ -105,12 +109,15 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
 
     public async Task<Result<ReservaDTO>> CancelarReserva(int id)
     {
-        var reserva = await dbContext.Reservas.Include(r => r.Tickets).FirstOrDefaultAsync(r => r.Id == id);
+        var reserva = await dbContext.Reservas.Include(r => r.Tickets).Include(r => r.Asiento).FirstOrDefaultAsync(r => r.Id == id);
         if (reserva == null) return Result<ReservaDTO>.Fail("La reserva no existe");
 
         reserva.Confirmado = false;
+        if (reserva.Asiento != null)
+            reserva.Asiento.Ocupado = false;
+        reserva.AsientoId = null;
+
         dbContext.Tickets.RemoveRange(reserva.Tickets);
-        
 
         await dbContext.SaveChangesAsync();
         return Result<ReservaDTO>.Ok(mapper.Map<ReservaDTO>(reserva));

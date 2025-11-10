@@ -10,6 +10,7 @@ public class AeroContext : DbContext
     public DbSet<Reserva> Reservas { get; set; }
     public DbSet<Slot> Slots { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<Asiento> Asientos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -27,7 +28,13 @@ public class AeroContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Vuelo>()
-            .HasMany(u => u.Reservas)
+            .HasMany(v => v.Reservas)
+            .WithOne(t => t.Vuelo)
+            .HasForeignKey(t => t.VueloId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Vuelo>()
+            .HasMany(v => v.Asientos)
             .WithOne(t => t.Vuelo)
             .HasForeignKey(t => t.VueloId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -36,7 +43,19 @@ public class AeroContext : DbContext
             .HasOne(v => v.Slot)
             .WithMany()
             .HasForeignKey(v => v.SlotId)
-            .OnDelete(DeleteBehavior.SetNull); // or Cascade
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Reserva>()
+            .HasOne(r => r.Asiento)
+            .WithMany()
+            .HasForeignKey(r => r.AsientoId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Ticket>()
+            .HasOne(t => t.Asiento)
+            .WithMany()
+            .HasForeignKey(t => t.AsientoId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         // When deleting a user → delete their tickets
         modelBuilder.Entity<Usuario>()

@@ -4,6 +4,7 @@ using Aerolineas.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aerolineas.Migrations
 {
     [DbContext(typeof(AeroContext))]
-    partial class AeroContextModelSnapshot : ModelSnapshot
+    [Migration("20251110021323_AddedSeatToReserva")]
+    partial class AddedSeatToReserva
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,9 +68,6 @@ namespace Aerolineas.Migrations
                     b.Property<int>("NumeroAsiento")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Ocupado")
-                        .HasColumnType("bit");
-
                     b.Property<int>("VueloId")
                         .HasColumnType("int");
 
@@ -86,7 +86,7 @@ namespace Aerolineas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AsientoId")
+                    b.Property<int>("AsientoId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Confirmado")
@@ -154,9 +154,6 @@ namespace Aerolineas.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AsientoId")
-                        .HasColumnType("int");
-
                     b.Property<int>("NumeroTicket")
                         .HasColumnType("int");
 
@@ -167,8 +164,6 @@ namespace Aerolineas.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AsientoId");
 
                     b.HasIndex("ReservaId");
 
@@ -278,7 +273,8 @@ namespace Aerolineas.Migrations
                     b.HasOne("Aerolineas.Models.Asiento", "Asiento")
                         .WithMany()
                         .HasForeignKey("AsientoId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Aerolineas.Models.Usuario", "Usuario")
                         .WithMany("Reservas")
@@ -301,11 +297,6 @@ namespace Aerolineas.Migrations
 
             modelBuilder.Entity("Aerolineas.Models.Ticket", b =>
                 {
-                    b.HasOne("Aerolineas.Models.Asiento", "Asiento")
-                        .WithMany()
-                        .HasForeignKey("AsientoId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Aerolineas.Models.Reserva", "Reserva")
                         .WithMany("Tickets")
                         .HasForeignKey("ReservaId")
@@ -317,8 +308,6 @@ namespace Aerolineas.Migrations
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Asiento");
 
                     b.Navigation("Reserva");
 
