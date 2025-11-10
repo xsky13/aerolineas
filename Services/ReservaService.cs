@@ -49,7 +49,8 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
             UsuarioId = reserva.UsuarioId,
             VueloId = reserva.VueloId,
             FechaReserva = reserva.FechaReserva,
-            Confirmado = false
+            Confirmado = false,
+            AsientoId = reserva.AsientoId
         };
         dbContext.Reservas.Add(dbReserva);
         await dbContext.SaveChangesAsync();
@@ -110,7 +111,7 @@ public class ReservaService(AeroContext dbContext, IMapper mapper, IUserService 
 
         reserva.Confirmado = false;
         dbContext.Tickets.RemoveRange(reserva.Tickets);
-        
+
 
         await dbContext.SaveChangesAsync();
         return Result<ReservaDTO>.Ok(mapper.Map<ReservaDTO>(reserva));

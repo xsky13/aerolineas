@@ -9,6 +9,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+
         CreateMap<Asiento, AsientoSimpleDTO>();
         CreateMap<Asiento, AsientoDTO>()
             .ForMember(dest => dest.Vuelo, opt => opt.MapFrom(src => src.Vuelo));
@@ -38,6 +39,7 @@ public class MappingProfile : Profile
         CreateMap<Reserva, ReservaDTO>()
             .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.Usuario))
             .ForMember(dest => dest.Tickets, opt => opt.MapFrom(src => src.Tickets))
+            .ForMember(dest => dest.Asiento, opt => opt.MapFrom(src => src.Asiento))
             .ForMember(dest => dest.Vuelo, opt => opt.MapFrom(src => src.Vuelo));
 
         CreateMap<Aeronave, AeronaveDTO>()
