@@ -13,6 +13,20 @@ namespace Aerolineas.Controllers;
 [Route("api/vuelos")]
 public class VueloController(IVuelosService vuelosService, ISlotService slotService) : ControllerBase
 {
+
+    private static HttpClient sharedClient = new()
+    {
+        BaseAddress = new Uri("https://jsonplaceholder.typicode.com"),
+    };
+
+    [HttpGet("test/test")]
+    public async Task<ActionResult<string>> Test()
+    {
+        using HttpResponseMessage response = await sharedClient.GetAsync("todos/3");
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        return Ok(jsonResponse);
+    }
+
     [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<Vuelo>>> Get()
