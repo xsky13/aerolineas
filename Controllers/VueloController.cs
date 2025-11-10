@@ -32,9 +32,9 @@ public class VueloController(IVuelosService vuelosService, ISlotService slotServ
 
     [Authorize(Roles = "admin")]
     [HttpPost]
-    public async Task<ActionResult<Vuelo>> Create([FromBody] CrearVueloDTO vueloDTO)
+    public async Task<ActionResult<VueloDTO>> Create([FromBody] CrearVueloDTO vueloDTO)
     {
-        Vuelo vuelo = await vuelosService.RegistrarVuelo(vueloDTO);
+        var vuelo = await vuelosService.RegistrarVuelo(vueloDTO);
         return Ok(vuelo);
     }
 
