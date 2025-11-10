@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Aerolineas.DTO;
 
 public class SlotResponse
@@ -8,7 +10,7 @@ public class SlotResponse
     public string Status { get; set; }
     public int GateId { get; set; }
     public string FlightCode { get; set; }
-    public DateTime ReservationExpiresAt { get; set; }
+    public DateTime? ReservationExpiresAt { get; set; }
 }
 
 public class SlotRequestDTO

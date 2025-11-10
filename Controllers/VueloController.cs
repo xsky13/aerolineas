@@ -91,6 +91,14 @@ public class VueloController(IVuelosService vuelosService, ISlotService slotServ
     }
 
     [Authorize(Roles = "admin")]
+    [HttpPost("{id}/cancelar_slot/{slotId}")]
+    public async Task<ActionResult<bool>> CancelarSlot(int id, int slotId)
+    {
+        var response = await slotService.CancelSlot(slotId);
+        return response.ToActionResult();
+    }
+
+    [Authorize(Roles = "admin")]
     [HttpPost("{id}/confirmar")]
     public async Task<ActionResult<VueloDTO>> ConfirmarVuelo(int id)
     {

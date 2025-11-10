@@ -83,8 +83,9 @@ public class VueloService(AeroContext db, IAeronaveService aeronaveService, ISlo
 
     public async Task<Result<VueloDTO>> ConfirmarVuelo(int id)
     {
-        Vuelo? vuelo = await GetVuelo(id);
+        Vuelo? vuelo = await db.Vuelos.Include(v => v.Aeronave).FirstOrDefaultAsync(v => v.Id == id);
         if (vuelo == null) return Result<VueloDTO>.Fail("El vuelo no existe");
+        if (vuelo.Aeronave == null) return Result<VueloDTO>.Fail("El vuelo no tiene aeronave");
 
         vuelo.Estado = "confirmado";
         await db.SaveChangesAsync();

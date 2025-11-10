@@ -51,7 +51,11 @@ builder.Services.AddScoped<IReservaService, ReservaService>();
 builder.Services.AddScoped<ISlotService, SlotService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        o.JsonSerializerOptions.AllowTrailingCommas = true;
+    });;
 
 builder.Services.AddAuthorization();
 
